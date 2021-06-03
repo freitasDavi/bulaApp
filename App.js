@@ -1,82 +1,97 @@
-import React from 'react';
-import * as Font from 'expo-font';
-import Logo from './src/Logos/LogoHome';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import React from "react";
+import * as Font from "expo-font";
+import Login from "./src/Screens/Login";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import {
+  configureFonts,
+  DefaultTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Tabs from "./src/Screens/navigation/tab";
 
 let customFonts = {
-  "Lato-Black": require('./assets/fonts/Lato Black.ttf'),
-  "Lato-Regular": require('./assets/fonts/Lato Regular.ttf'),
-  "Lato-Bold": require('./assets/fonts/Lato-Bold.ttf'),
-  "Lato-Light": require('./assets/fonts/Lato-Light.ttf'),
-  "Lato-Thin": require('./assets/fonts/Lato-Thin.ttf'),
+  "Lato-Black": require("./assets/fonts/Lato-Black.ttf"),
+  "Lato-Regular": require("./assets/fonts/Lato-Regular.ttf"),
+  "Lato-Bold": require("./assets/fonts/Lato-Bold.ttf"),
+  "Lato-Light": require("./assets/fonts/Lato-Light.ttf"),
+  "Lato-Thin": require("./assets/fonts/Lato-Thin.ttf"),
 };
 
 const fontConfig = {
   default: {
     regular: {
-      fontFamily: 'Lato-Regular',
-      fontWeight: 'normal'
+      fontFamily: "Lato-Regular",
+      fontWeight: "normal",
     },
     medium: {
-      fontFamily: 'Lato-Bold',
-      fontWeight: 'normal'
+      fontFamily: "Lato-Bold",
+      fontWeight: "normal",
     },
     bold: {
-      fontFamily: 'Lato-Black',
-      fontWeight: 'normal'
+      fontFamily: "Lato-Black",
+      fontWeight: "normal",
     },
     light: {
-      fontFamily: 'Lato-Light',
-      fontWeight: 'normal'
+      fontFamily: "Lato-Light",
+      fontWeight: "normal",
     },
     thin: {
-      fontFamily: 'Lato-Thin',
-      fontWeight: 'normal'
-    }
-  }
+      fontFamily: "Lato-Thin",
+      fontWeight: "normal",
+    },
+  },
 };
 
 const theme = {
   ...DefaultTheme,
-  roundness: 30,
   fonts: configureFonts(fontConfig),
   colors: {
     ...DefaultTheme.colors,
-    primary: '#0d80d6',
-    accent: '#e68fae',
-    background: '#c6e1f2'
-  }
+    primary: "#005A3B",
+    accent: "#008E5E",
+    background: "#FFFFFF",
+    surface: "#008E5E",
+    text: "#005A3B",
+    backdrop: "#FF0000",
+  },
 };
 
-export default async function App() {
-  const [fontsLoaded, setFontsLoaded] = React.useState(false);
+const AuthStack = createStackNavigator();
 
-  React.useEffect(() => {
-    Font.loadAsync(customFonts);
-    // cara, tens que setar o estado de algum jeito, da teus pulo
-  }, [])
+export default function App() {
+  const [loaded] = Font.useFonts(customFonts);
+  const [userToken, setUserToken] = React.useState();
 
-  if(fontsLoaded === false){
+  if (!loaded) {
     return <Text>Carregando...</Text>;
   }
 
   return (
-    <View style={styles.container}>
-      <Logo />
-      <Text>Open up App.js to start working on your app!</Text>
-      <Text style={{ fontFamily: "Lato-Black" }} >Salve</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <PaperProvider theme={theme}>
+        {userToken ? (
+          <AuthStack.Navigator>
+            <AuthStack.Screen name="HomePage" component={Tabs} />
+          </AuthStack.Navigator>
+        ) : (
+          <AuthStack.Navigator>
+            <AuthStack.Screen name="Login" component={Login} />
+          </AuthStack.Navigator>
+        )}
+      </PaperProvider>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    // marginTop: 150,
   },
 });
