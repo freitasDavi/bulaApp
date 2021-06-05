@@ -5,22 +5,26 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Button as ReactNativeButton,
   Alert,
   Text,
 } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Logo from "../../Logos/LogoHome";
 import { useForm, Controller } from "react-hook-form";
+import { Authentication } from "../../../services/context";
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-export default function Login() {
+export default function Login({ navigation }) {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm();
+
+  const { signIn } = React.useContext(Authentication);
 
   const onSubmit = (data) => {
     let payload = {
@@ -35,6 +39,7 @@ export default function Login() {
         if (response.status === 200) {
           Alert.alert("Atenção", "Você está logado");
         }
+        signIn(data.email, data.senha);
       })
       .catch((errors) => {
         console.log(errors);
@@ -44,8 +49,8 @@ export default function Login() {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <Logo style={{ flex: 1 }} />
-        <View style={{ flex: 4 }}>
+        <Logo />
+        <View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>E-mail</Text>
             <Controller
@@ -97,23 +102,19 @@ export default function Login() {
             />
           </View>
           <View style={styles.buttonBox}>
-            {/* <TouchableOpacity
-            onPress={handleSubmit(onSubmit)}
-            style={styles.buttonLogin}
-          > */}
             <Button onPress={handleSubmit(onSubmit)} mode="contained">
               <Text style={styles.buttonLoginText}>ENTRAR</Text>
             </Button>
           </View>
-          {/* </TouchableOpacity> */}
         </View>
         <View style={styles.buttonBox}>
           <Text style={{ fontSize: 16 }}>Não possui uma conta?</Text>
-          <Button
+          <TouchableOpacity
             style={{ marginTop: 10, fontFamily: "Lato_700Bold" }}
-            label="Cadastre-se"
             onPress={() => navigation.navigate("Cadastro")}
-          />
+          >
+            <Text>Cadastre-se</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -122,7 +123,9 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 100,
+    marginTop: 70,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   inputContainer: {
@@ -138,13 +141,13 @@ const styles = StyleSheet.create({
 
   label: {
     color: "#005A3B",
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: "Lato-Regular",
   },
 
   buttonBox: {
-    marginTop: 60,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 60,
   },
 });
