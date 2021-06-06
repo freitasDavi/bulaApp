@@ -174,7 +174,7 @@ export default function App() {
       <NavigationContainer>
         <PaperProvider theme={theme}>
           {loginState.userToken !== null ? (
-            <AuthStack.Navigator>
+            <AuthStack.Navigator screenOptions={{ headerShown: false }}>
               <AuthStack.Screen name="HomePage" component={Tabs} />
             </AuthStack.Navigator>
           ) : (

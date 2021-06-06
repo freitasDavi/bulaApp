@@ -17,7 +17,6 @@ const EMAIL_REGEX =
 
 export default function Cadastro({ navigation }) {
   const {
-    register,
     control,
     handleSubmit,
     formState: { errors },
