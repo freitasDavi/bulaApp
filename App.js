@@ -1,8 +1,7 @@
 import React from "react";
 import * as Font from "expo-font";
 import Login from "./src/Screens/Login";
-import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import {
   configureFonts,
   DefaultTheme,
@@ -12,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Authentication } from "./services/context";
 import Tabs from "./src/Screens/navigation/tab";
+import Cadastro from "./src/Screens/Cadastro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 let customFonts = {
@@ -65,8 +65,6 @@ const AuthStack = createStackNavigator();
 
 export default function App() {
   const [loaded] = Font.useFonts(customFonts);
-  // const [isLoading, setIsLoading] = React.useState(true);
-  // const [userToken, setUserToken] = React.useState(null);
 
   const initialLoginState = {
     isLoading: true,
@@ -114,8 +112,6 @@ export default function App() {
   const authContext = React.useMemo(
     () => ({
       signIn: async (userName, password) => {
-        // setUserToken("tkn");
-        // setIsLoading(false);
         let userToken;
         userToken = null;
 
@@ -128,20 +124,25 @@ export default function App() {
             console.log(e);
           }
         }
-        // console.log("user token: ", userToken);
         dispatch({ type: "LOGIN", id: userName, token: userToken });
       },
       signOut: async () => {
-        // setUserToken(null);
-        // setIsLoading(false);
         try {
           await AsyncStorage.removeItem("userToken");
         } catch (e) {}
         dispatch({ type: "LOGOUT" });
       },
-      signUp: () => {
-        setUserToken("tkn");
-        setIsLoading(false);
+      signUp: async (userName) => {
+        let userToken;
+        userToken = "JWT";
+
+        try {
+          await AsyncStorage.setItem("userToken", userToken);
+        } catch (e) {
+          console.log(e);
+        }
+
+        dispatch({ type: "REGISTER", id: userName, token: usertoken });
       },
     }),
     []
@@ -149,7 +150,6 @@ export default function App() {
 
   React.useEffect(() => {
     setTimeout(async () => {
-      // setIsLoading(false);
       let userToken;
       userToken = null;
       try {
@@ -157,7 +157,6 @@ export default function App() {
       } catch (e) {
         console.log(e);
       }
-      // console.log("user token: ", userToken);
       dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
     }, 1000);
   }, []);
@@ -181,6 +180,7 @@ export default function App() {
           ) : (
             <AuthStack.Navigator>
               <AuthStack.Screen name="Login" component={Login} />
+              <AuthStack.Screen name="Cadastro" component={Cadastro} />
             </AuthStack.Navigator>
           )}
         </PaperProvider>
@@ -188,13 +188,3 @@ export default function App() {
     </Authentication.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    // marginTop: 150,
-  },
-});
