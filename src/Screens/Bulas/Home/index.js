@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import MiniLogo from "../../../Logos/AlternateLogo";
 import Icon from "react-native-vector-icons/Feather";
+import Accordion from 'react-native-collapsible/Accordion';
 import {
   ScrollView,
   View,
@@ -12,8 +13,81 @@ import {
   Image,
 } from "react-native";
 
+const CONTENT = [
+  {
+    title: 'Identificação do medicamento',
+    subTitle: 'Nome comercial, genérico e similar',
+    content1: 'Solução oral 2mg/ml: ',
+    content12: 'Embalagem contendo 1 frasco com 120mL + copo dosador',
+    content2: 'USO ORAL',
+    content3: 'USO PEDIÁTRICO',
+  },
+  {
+    title: 'Apresentação',
+    subTitle: 'Peso, volume, via de administração e público',
+    content1: 'Solução oral 2mg/ml: ',
+    content12: 'Embalagem contendo 1 frasco com 120mL + copo dosador',
+    content2: 'USO ORAL',
+    content3: 'USO PEDIÁTRICO',
+  },
+  {
+    title: 'Composição',
+    subTitle: 'Princípios ativos que contém no medicamento',
+    content1: 'Solução oral 2mg/ml: ',
+    content12: 'Embalagem contendo 1 frasco com 120mL + copo dosador',
+    content2: 'USO ORAL',
+    content3: 'USO PEDIÁTRICO',
+  },
+  {
+    title: "Fabricante",
+    subTitle: 'Informações de validade e sobre o fabricante',
+    content1: 'Solução oral 2mg/ml: ',
+    content12: 'Embalagem contendo 1 frasco com 120mL + copo dosador',
+    content2: 'USO ORAL',
+    content3: 'USO PEDIÁTRICO',
+  }
+]
+
 export default function HomeBula({ route, navigation }) {
   const [infos, setInfos] = React.useState(null);
+  const [activeSections, setActiveSections] = React.useState([]);
+
+  accordionHeader = (section, _, isActive) => {
+    return (
+      <View elevation={5} style={[styles.header, isActive ? styles.headerActive : styles.headerInactive]}>
+        <View>
+        <Text style={[isActive ? styles.headerTitleActive : styles.headerTitle]}>{section.title}</Text>
+        {!isActive ? (
+          <Text style={styles.headerSubTitle}>{section.subTitle}</Text>
+        ): (
+          <Text></Text>
+        )}
+        </View>
+        {isActive ? (
+          <Icon name="chevron-down" size={40} color="#fff"  />
+        ) : (
+          <Icon name="chevron-right" size={40} color="#8B8B8B" />
+        )}
+        
+      </View>
+    )
+  };
+
+  accordionContent = (section, _, isActive) => {
+    return (
+      <View style={styles.accordionContent}>
+        <Text style={styles.accordionContentText}>{section.content1}</Text>
+        <Text style={styles.accordionContentText}>{section.content12}</Text>
+        <Text style={styles.accordionContentText}>{section.content2}</Text>
+        <Text style={styles.accordionContentText}>{section.content3}</Text>
+      </View>
+    )
+  };
+  
+
+  const setSections = (sections) => {
+    setActiveSections(sections.includes(undefined) ? [] : sections);
+  }
 
   React.useEffect(() => {
     if (route.params.id !== null) {
@@ -45,6 +119,7 @@ export default function HomeBula({ route, navigation }) {
         <View style={styles.container}>
           <MiniLogo />
           <Text>Barra de pesquisa</Text>
+          {/* Card */}
           <View style={styles.card}>
             <View style={styles.leftCard}>
               <Image
@@ -62,12 +137,26 @@ export default function HomeBula({ route, navigation }) {
               </TouchableOpacity>
             </View>
           </View>
+          {/* Atenção */}
           <View style={styles.atencaoContainer}>
             <Text style={styles.atencaoTitulo2}>ATENÇÃO!</Text>
             <Text style={styles.atencaoTitulo}>
               O dicloridrato de hidroxizina contém lactose na composição e pode
               oferecer riscos a você.
             </Text>
+          </View>
+          {/* Acordeon */}
+          <View style={styles.sobreContainer}>
+              <Text style={styles.sobreTitulo}>Sobre o medicamento</Text>
+              <Accordion 
+                activeSections={activeSections} // Seções ativas
+                sections={CONTENT} // Conteúdos
+                touchableComponent={TouchableOpacity} // Jeito do clique
+                renderHeader={accordionHeader} // Header
+                renderContent={accordionContent} // Conteúdo 
+                duration={400} // Duração em milisegundos
+                onChange={setSections} // Set acordeon ativo
+              />
           </View>
         </View>
       </ScrollView>
@@ -81,6 +170,69 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight + 29,
     flexDirection: "column",
     backgroundColor: "#FFF",
+  },
+
+  header: {
+    width: 303,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    height: 60,
+    borderRadius: 5,
+    marginBottom: 14 
+  },
+
+  headerActive: {
+    backgroundColor: "#005A3B",
+    marginBottom: 0 
+  },
+
+  headerTitle: {
+    fontFamily: "Lato-Regular",
+    color: "#005A3B",
+    fontSize: 17
+  },
+
+  headerTitleActive: {
+    fontFamily: "Lato-Regular",
+    color: "#fff",
+    fontSize: 19,
+    paddingTop: 15
+  },
+
+  headerSubTitle: {
+    fontSize: 10,
+    fontFamily: "Lato-Regular",
+    color: "#8B8B8B"
+  }, 
+
+  headerInactive: {
+    backgroundColor: "#fff"
+  },
+
+  accordionContent: {
+    backgroundColor: "#008E5E",
+    borderRadius: 5,
+    width: 303,
+    padding: 16,
+    marginBottom: 14
+  },
+
+  accordionContentText: {
+    color: "#fff",
+    fontFamily: "Lato-Regular"
+  },
+
+  sobreContainer: {
+    width: "80%",
+    marginTop: 50
+  },
+
+  sobreTitulo: {
+    color: "#005A3B",
+    fontSize: 21,
+    fontFamily: "Lato-Regular",
   },
 
   atencaoContainer: {
