@@ -34,6 +34,7 @@ export default function Home({ navigation }) {
       screen: "Resultados",
       params: { payload: payload },
     });
+    setIsLoading(false);
   }
 
   return (

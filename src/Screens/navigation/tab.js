@@ -9,6 +9,7 @@ import Favorites from "../Favorites";
 import Home from "../Home";
 import Profile from "../Profile";
 import SearchResults from "../SearchResults";
+import HomeBula from "../Bulas/Home";
 
 const Tab = createBottomTabNavigator();
 
@@ -114,6 +115,11 @@ export const BulaStacks = () => {
   return (
     <BulaStack.Navigator screenOptions={{ headerShown: false }}>
       <BulaStack.Screen name="Resultados" component={SearchResults} />
+      <BulaStack.Screen
+        name="HomeBula"
+        component={HomeBula}
+        options={{ cardStyle: { backgroundColor: "white" } }}
+      />
     </BulaStack.Navigator>
   );
 };

@@ -7,59 +7,111 @@ import {
   StatusBar,
   ScrollView,
   FlatList,
+  TouchableOpacity,
   StyleSheet,
 } from "react-native";
 
 export default function SearchResults({ route, navigation }) {
-  const [results, setResults] = React.useState([{ nome: "", composicao: "" }]);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [resultados, setResultados] = React.useState([
+    {
+      id: "",
+      nome: "",
+      composicao: "",
+    },
+  ]);
 
   React.useEffect(() => {
     const { payload } = route.params;
 
     async function getResults(payload) {
-      setResults({ nome: "", composicao: "" });
-
       await axios
         .post("https://api-npab.herokuapp.com/api/bulas/find", payload)
         .then((response) => {
-          let _results = results;
-          _results = {
+          let _results = [...resultados];
+          _results.push({
+            id: response.data[0]._id,
             nome: response.data[0].nome_bula,
             composicao: response.data[0].composicao_bula,
-          };
-          setResults(_results);
+          });
+          console.log("resultados da pesquisa");
+          console.log(_results);
+          console.log("----------------------------");
+
+          setResultados(_results);
         })
         .catch((err) => console.log(err));
+      setIsLoaded(true);
     }
     if (payload) {
       getResults(payload);
     }
   }, []);
 
-  return (
-    <View style={styles.container}>
-      <MiniLogo />
-      <Text>Resultados</Text>
-      <FlatList
-        data={results}
-        renderItem={lista}
-        keyExtractor={(item) => item.nome}
-      />
-    </View>
-  );
-}
+  function navigateToBula(id) {
+    console.log("infERNO");
+    console.log(id);
+    navigation.navigate("SearchResults", {
+      screen: "HomeBula",
+      params: {
+        id: id,
+      },
+    });
+  }
 
-const lista = (resultado) => (
-  <View key={resultado.nome}>
-    <Text>{resultado.nome}</Text>
-    <Text>{resultado.composicao}</Text>
-  </View>
-);
+  if (!isLoaded) {
+    return (
+      <View>
+        <Text>Carregando</Text>
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <MiniLogo />
+        <Text>Resultados</Text>
+        {resultados.map((item) => {
+          if (item.nome.length === 0) {
+            return <View key={item.nome}></View>;
+          } else {
+            return (
+              <TouchableOpacity
+                key={item.nome}
+                style={styles.listItem}
+                onPress={() => navigateToBula(item.id)}
+              >
+                <Text style={styles.titulo}>{item.nome}</Text>
+                <Text style={styles.composicao}>{item.composicao}</Text>
+              </TouchableOpacity>
+            );
+          }
+        })}
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     marginTop: StatusBar.currentHeight + 29,
     flexDirection: "column",
+  },
+
+  listItem: {
+    width: "80%",
+    marginTop: 21,
+  },
+
+  titulo: {
+    color: "#005A3B",
+    fontFamily: "Lato-Bold",
+    fontSize: 21,
+  },
+
+  composicao: {
+    color: "#8B8B8B",
+    fontFamily: "Lato-Regular",
+    fontSize: 13,
   },
 });
