@@ -198,6 +198,7 @@ export default function Cadastro({ navigation }) {
                 errorText={errors?.senha?.message}
                 placeholder="senha"
                 mode="outlined"
+                secureTextEntry
                 placeholderTextColor="#8B8B8B"
               />
             )}
@@ -222,6 +223,7 @@ export default function Cadastro({ navigation }) {
                 errorText={errors?.senhaConfirm?.message}
                 placeholder="Digite sua senha novamente"
                 mode="outlined"
+                secureTextEntry
                 placeholderTextColor="#8B8B8B"
               />
             )}

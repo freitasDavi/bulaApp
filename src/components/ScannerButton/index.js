@@ -58,4 +58,11 @@ const styles = StyleSheet.create({
     color: "#8B8B8B",
     fontSize: 13,
   },
+
+  modal: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: "lightgrey",
+  },
 });

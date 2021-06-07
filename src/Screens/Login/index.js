@@ -97,6 +97,7 @@ export default function Login({ navigation }) {
                   error={errors.senha}
                   errorText={errors?.senha?.message}
                   placeholder="Senha"
+                  secureTextEntry
                 />
               )}
             />

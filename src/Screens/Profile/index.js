@@ -131,6 +131,7 @@ export default function Profile({ navigation }) {
                   placeholder="senha"
                   mode="outlined"
                   placeholderTextColor="#8B8B8B"
+                  secureTextEntry
                 />
               )}
             />

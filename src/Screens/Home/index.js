@@ -25,7 +25,7 @@ export default function Home({ navigation }) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={{ marginTop: 29, marginBottom: 27 }}>
+        <View style={{ marginBottom: 27 }}>
           <MiniLogo />
         </View>
         <SearchBar />
@@ -55,7 +55,7 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginTop: StatusBar.currentHeight + 20,
+    marginTop: StatusBar.currentHeight + 29,
     flexDirection: "column",
   },
 

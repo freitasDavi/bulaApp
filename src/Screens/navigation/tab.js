@@ -1,8 +1,10 @@
 import React from "react";
 import Icon from "react-native-vector-icons/Feather";
+import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Alarm from "../Alarm";
+import CreateAlarm from "../CreateAlarm";
 import Favorites from "../Favorites";
 import Home from "../Home";
 import Profile from "../Profile";
@@ -39,7 +41,7 @@ export default Tabs = () => {
       />
       <Tab.Screen
         name="Alarm"
-        component={Alarm}
+        component={AlarmTabs}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -77,5 +79,19 @@ export default Tabs = () => {
         }}
       />
     </Tab.Navigator>
+  );
+};
+
+const AlarmStack = createStackNavigator();
+
+export const AlarmTabs = () => {
+  return (
+    <AlarmStack.Navigator
+      initialRouteName="Alarms"
+      screenOptions={{ headerShown: false }}
+    >
+      <AlarmStack.Screen name="Alarms" component={Alarm} />
+      <AlarmStack.Screen name="CreateAlarm" component={CreateAlarm} />
+    </AlarmStack.Navigator>
   );
 };
