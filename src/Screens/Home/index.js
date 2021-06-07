@@ -13,6 +13,7 @@ import ScannerButton from "../../components/ScannerButton";
 
 export default function Home({ navigation }) {
   const [modalVisibile, setModalVisible] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [type, setType] = React.useState();
   const [data, setData] = React.useState();
 
@@ -22,13 +23,30 @@ export default function Home({ navigation }) {
     setModalVisible(false);
   };
 
+  async function partialSearch(text) {
+    setIsLoading(true);
+    const payload = {
+      search: text,
+    };
+
+    console.log(payload);
+    navigation.navigate("SearchResults", {
+      screen: "Resultados",
+      params: { payload: payload },
+    });
+  }
+
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={{ marginBottom: 27 }}>
           <MiniLogo />
         </View>
-        <SearchBar />
+        <SearchBar
+          partialSearch={partialSearch}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
         <ScannerButton />
         <View style={styles.buscasRecentes}>
           <Text style={styles.tituloBuscas}>Buscas recentes</Text>

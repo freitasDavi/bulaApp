@@ -5,29 +5,8 @@ import axios from "axios";
 
 import Icon from "react-native-vector-icons/FontAwesome5";
 
-export default function Searchbar() {
+export default function Searchbar({ partialSearch, isLoading, setIsLoading }) {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function partialSearch(text) {
-    setIsLoading(true);
-    // const payload = {
-    //     search: text,
-    //   },
-    //   uriFinal = "https://api-npab.herokuapp.com/api/bulas/find";
-
-    // await axios
-    //   .post(uriFinal, payload)
-    //   .then((response) => {
-    //     console.log(response.data);
-    //   })
-    //   .catch((err) => console.log(err));
-    console.log(text);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }
 
   return (
     <View>

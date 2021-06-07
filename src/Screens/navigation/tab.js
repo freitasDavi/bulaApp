@@ -8,6 +8,7 @@ import CreateAlarm from "../CreateAlarm";
 import Favorites from "../Favorites";
 import Home from "../Home";
 import Profile from "../Profile";
+import SearchResults from "../SearchResults";
 
 const Tab = createBottomTabNavigator();
 
@@ -28,7 +29,7 @@ export default Tabs = () => {
     >
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStackTabs}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -93,5 +94,26 @@ export const AlarmTabs = () => {
       <AlarmStack.Screen name="Alarms" component={Alarm} />
       <AlarmStack.Screen name="CreateAlarm" component={CreateAlarm} />
     </AlarmStack.Navigator>
+  );
+};
+
+const HomeStack = createStackNavigator();
+
+export const HomeStackTabs = () => {
+  return (
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="HomeDefault" component={Home} />
+      <HomeStack.Screen name="SearchResults" component={BulaStacks} />
+    </HomeStack.Navigator>
+  );
+};
+
+const BulaStack = createStackNavigator();
+
+export const BulaStacks = () => {
+  return (
+    <BulaStack.Navigator screenOptions={{ headerShown: false }}>
+      <BulaStack.Screen name="Resultados" component={SearchResults} />
+    </BulaStack.Navigator>
   );
 };
