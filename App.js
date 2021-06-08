@@ -114,16 +114,14 @@ export default function App() {
       signIn: async (userName, password) => {
         let userToken;
         userToken = null;
-
-        if (userName == "1@gmail.com" && password == 1) {
-          // Match the api
-          userToken = "JWT";
-          try {
-            await AsyncStorage.setItem("userToken", userToken);
-          } catch (e) {
-            console.log(e);
-          }
+        // Match the api
+        userToken = "JWT";
+        try {
+          await AsyncStorage.setItem("userToken", userToken);
+        } catch (e) {
+          console.log(e);
         }
+
         dispatch({ type: "LOGIN", id: userName, token: userToken });
       },
       signOut: async () => {
@@ -142,7 +140,7 @@ export default function App() {
           console.log(e);
         }
 
-        dispatch({ type: "REGISTER", id: userName, token: usertoken });
+        dispatch({ type: "REGISTER", id: userName, token: userToken });
       },
     }),
     []
