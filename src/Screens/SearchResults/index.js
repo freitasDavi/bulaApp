@@ -7,12 +7,14 @@ import {
   StatusBar,
   ScrollView,
   FlatList,
+  ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
 
 export default function SearchResults({ route, navigation }) {
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [naoPossuiResultados, setNaoPossuiResultados] = React.useState(false);
   const [resultados, setResultados] = React.useState([
     {
       id: "",
@@ -29,14 +31,19 @@ export default function SearchResults({ route, navigation }) {
         .post("https://api-npab.herokuapp.com/api/bulas/find", payload)
         .then((response) => {
           let _results = [...resultados];
+
+          if(response.data[0] === undefined) {
+            setNaoPossuiResultados(true);
+            // setIsLoaded(true);
+            console.log("Não foram encontrados resultados para sua pesquisa");
+            return;
+          }
+
           _results.push({
             id: response.data[0]._id,
             nome: response.data[0].nome_bula,
             composicao: response.data[0].composicao_bula,
           });
-          console.log("resultados da pesquisa");
-          console.log(_results);
-          console.log("----------------------------");
 
           setResultados(_results);
         })
@@ -61,11 +68,12 @@ export default function SearchResults({ route, navigation }) {
 
   if (!isLoaded) {
     return (
-      <View>
-        <Text>Carregando</Text>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
   } else {
+    if (!naoPossuiResultados) {
     return (
       <View style={styles.container}>
         <MiniLogo />
@@ -88,6 +96,14 @@ export default function SearchResults({ route, navigation }) {
         })}
       </View>
     );
+    } else {
+      return (
+        <View style={styles.container}>
+          <MiniLogo />
+          <Text>Não foram encontrados resultados para sua pesquisa</Text>
+        </View>
+      )
+    }
   }
 }
 

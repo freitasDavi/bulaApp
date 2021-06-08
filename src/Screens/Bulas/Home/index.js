@@ -3,10 +3,12 @@ import React from "react";
 import MiniLogo from "../../../Logos/AlternateLogo";
 import Icon from "react-native-vector-icons/Feather";
 import Accordion from "react-native-collapsible/Accordion";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import {
   CurrentPage,
   CurrentPageProvider,
 } from "../../../../services/otherContext";
+import { CarouselCardItem } from "../../../components/CarouselCardItem";
 import {
   ScrollView,
   View,
@@ -16,6 +18,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ActivityIndicator,
   FlatList
 } from "react-native";
 
@@ -66,62 +69,53 @@ export default function HomeBula({ route, navigation }) {
   const [activeSections, setActiveSections] = React.useState([]);
   const [index, setIndex] = React.useState(0);
   const isCarousel = React.useRef(null);
-  const [paginaAtual, setPaginaAtual] = React.useContext(CurrentPage);
+  const [paginaAtual, setPaginaAtual] = React.useState("Home");
 
   const dataFock = [
     {
       title: "Para que serve?",
       body: "Indicações de uso do medicamento.",
-      menu: "ParaQue",
-      function: setCurrentMenu
+      menu: "ParaQue"
     },
     {
       title: "Como funciona?",
       body: "Ações do medicamento e tempo médio para ter efeito.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "Funciona"
     },
     {
       title: "Quando não usar?",
       body: "Informações sobre as contraindicações do medicamento.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "NaoUsar"
     },
     {
       title: "O que saber antes de tomar?",
       body: "Advertências e precauções que se deve saber antes de tomar o medicamento.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "OQueSaber"
     },
     {
       title: "Como deve ser armazenado?",
       body: "Onde, como e por quanto tempo o medicamento pode ser guardado.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "Armazenado"
     },
     {
       title: "Como devo usar?",
       body: "Indicações como usar, manusear e aplicar o medicamento.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "ComoUsar"
     },
     {
       title: "O que fazer quando esquecer?",
       body: "Indicações do que fazer quando esquecer de tomar o medicamento.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "Esquecer"
     },
     {
       title: "Quais os malefícios?",
       body: "Apresentação dos males com reações adversas e sintomas.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "Maleficios"
     },
     {
       title: "O que fazer ao ter superdose?",
       body: "Indicações do que fazer ao ter ingerido uma dose maior do que a indicada.",
-      menu: "Funciona",
-      function: setCurrentMenu
+      menu: "Superdose"
     },
   ];
 
@@ -195,84 +189,455 @@ export default function HomeBula({ route, navigation }) {
 
   if (infos === null) {
     return (
-      <View>
-        <Text>Carregando</Text>
+      <View style={styles.container}>
+        <MiniLogo />
+        <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
   } else {
-    return (
-      <CurrentPageProvider>
+    switch (paginaAtual) {
+      case "Home": 
+      return (
+        <CurrentPageProvider>
+          <ScrollView>
+            <View style={styles.container}>
+              <MiniLogo />
+              <Text>Barra de pesquisa</Text>
+              {/* Card */}
+              <View style={styles.card}>
+                <View style={styles.leftCard}>
+                  <Image
+                    style={styles.leftCardImage}
+                    source={{
+                      uri: "https://uploads.consultaremedios.com.br/product_variation_images/full/becc4de4188cc5aaa759931dd0f8fef4811d1012.jpg?1606493189",
+                    }}
+                  />
+                </View>
+                <View style={styles.rightCard}>
+                  <Text style={styles.rightCardRemedio}>{infos.nome_bula}</Text>
+                  <Text style={styles.rightCardInfo}>
+                    {infos.composicao_bula}
+                  </Text>
+                  <TouchableOpacity style={styles.rightCardButton}>
+                    <Text style={styles.rightCardButtonText}>FAVORITAR</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {/* Atenção */}
+              <View style={styles.atencaoContainer}>
+                <Text style={styles.atencaoTitulo2}>ATENÇÃO!</Text>
+                <Text style={styles.atencaoTitulo}>
+                  O dicloridrato de hidroxizina contém lactose na composição e
+                  pode oferecer riscos a você.
+                </Text>
+              </View>
+  
+              <View style={{ height: 180 }}>
+  
+                <FlatList 
+                  data={dataFock}
+                  keyExtractor={item => item.title}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({item}) => {
+                    return (
+                      <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                          <Text style={styles.carouselTitle}>{item.title}</Text>
+                          <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                      </TouchableOpacity>
+                    )
+                  }}
+                  style={{ width: 325 }}
+                />
+  
+  
+              </View>
+              <View style={styles.sobreContainer}>
+                <Text style={styles.sobreTitulo}>Sobre o medicamento</Text>
+                <Accordion
+                  activeSections={activeSections} // Seções ativas
+                  sections={CONTENT} // Conteúdos
+                  touchableComponent={TouchableOpacity} // Jeito do clique
+                  renderHeader={accordionHeader} // Header
+                  renderContent={accordionContent} // Conteúdo
+                  duration={400} // Duração em milisegundos
+                  onChange={setSections} // Set acordeon ativo
+                />
+              </View>
+  
+              {/* Acordeon */}
+            </View>
+          </ScrollView>
+        </CurrentPageProvider>
+      );
+      break;
+
+      case "ParaQue" :
+      return (
+        <View style={styles.container}>
+          <MiniLogo />
+          <View style={styles.infosContainer}>
+            <Text style={styles.infosTitle}>
+              Para que serve?
+            </Text>
+            <Text style={styles.paraQueServeTexto}>
+              {infos.mecanismo_bula}
+            </Text>
+          </View>
+          <View style={{ height: 225 }}>
+          <Text style={styles.carouselContainerTitle}>
+              Mais informações
+            </Text>
+          <FlatList 
+                  data={dataFock}
+                  keyExtractor={item => item.title}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({item}) => {
+                    return (
+                      <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                          <Text style={styles.carouselTitle}>{item.title}</Text>
+                          <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                      </TouchableOpacity>
+                    )
+                  }}
+                  style={{ width: 325 }}
+                />
+          </View>
+        </View>
+      );
+      break;
+
+      case "Funciona": 
+      return (
         <ScrollView>
           <View style={styles.container}>
             <MiniLogo />
-            <Text>Barra de pesquisa</Text>
-            {/* Card */}
-            <View style={styles.card}>
-              <View style={styles.leftCard}>
-                <Image
-                  style={styles.leftCardImage}
-                  source={{
-                    uri: "https://uploads.consultaremedios.com.br/product_variation_images/full/becc4de4188cc5aaa759931dd0f8fef4811d1012.jpg?1606493189",
-                  }}
-                />
-              </View>
-              <View style={styles.rightCard}>
-                <Text style={styles.rightCardRemedio}>{infos.nome_bula}</Text>
-                <Text style={styles.rightCardInfo}>
-                  {infos.composicao_bula}
-                </Text>
-                <TouchableOpacity style={styles.rightCardButton}>
-                  <Text style={styles.rightCardButtonText}>FAVORITAR</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            {/* Atenção */}
-            <View style={styles.atencaoContainer}>
-              <Text style={styles.atencaoTitulo2}>ATENÇÃO!</Text>
-              <Text style={styles.atencaoTitulo}>
-                O dicloridrato de hidroxizina contém lactose na composição e
-                pode oferecer riscos a você.
+            <View style={styles.infosContainer}>
+              <Text style={styles.infosTitle}>
+                Como funciona?
               </Text>
+              {infos.como_usar_bula.map((paragrafo, index) => (
+                <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                  {paragrafo}
+                </Text>
+              ))}
+              
             </View>
-
-            <View style={{ height: 230 }}>
-
-              <FlatList 
-                data={dataFock}
-                keyExtractor={item => item.title}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                renderItem={({item}) => {
-                  return (
-                    <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
-                        <Text style={styles.carouselTitle}>{item.title}</Text>
-                        <Text style={styles.carouselSubTitle}>{item.body}</Text>
-                    </TouchableOpacity>
-                  )
-                }}
-                style={{ width: 325 }}
-              />
-
-
+            <View style={{ height: 225 }}>
+            <Text style={styles.carouselContainerTitle}>
+                Mais informações
+              </Text>
+            <FlatList 
+                    data={dataFock}
+                    keyExtractor={item => item.title}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => {
+                      return (
+                        <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                            <Text style={styles.carouselTitle}>{item.title}</Text>
+                            <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    style={{ width: 325 }}
+                  />
             </View>
-            <View style={styles.sobreContainer}>
-              <Text style={styles.sobreTitulo}>Sobre o medicamento</Text>
-              <Accordion
-                activeSections={activeSections} // Seções ativas
-                sections={CONTENT} // Conteúdos
-                touchableComponent={TouchableOpacity} // Jeito do clique
-                renderHeader={accordionHeader} // Header
-                renderContent={accordionContent} // Conteúdo
-                duration={400} // Duração em milisegundos
-                onChange={setSections} // Set acordeon ativo
-              />
-            </View>
-
-            {/* Acordeon */}
           </View>
         </ScrollView>
-      </CurrentPageProvider>
-    );
+      );
+      break;
+
+      case "NaoUsar":
+        return (
+          <ScrollView>
+            <View style={styles.container}>
+              <MiniLogo />
+              <View style={styles.infosContainer}>
+                <Text style={styles.infosTitle}>
+                  Quando não usar?
+                </Text>
+                {infos.contraindicacoes_bula.map((paragrafo, index) => (
+                  <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                    {paragrafo}
+                  </Text>
+                ))}
+                
+              </View>
+              <View style={{ height: 225 }}>
+              <Text style={styles.carouselContainerTitle}>
+                  Mais informações
+                </Text>
+              <FlatList 
+                      data={dataFock}
+                      keyExtractor={item => item.title}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      renderItem={({item}) => {
+                        return (
+                          <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                              <Text style={styles.carouselTitle}>{item.title}</Text>
+                              <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                          </TouchableOpacity>
+                        )
+                      }}
+                      style={{ width: 325 }}
+                    />
+              </View>
+            </View>
+          </ScrollView>
+        );
+      break;
+
+      case "OQueSaber":
+        return (
+          <ScrollView>
+            <View style={styles.container}>
+              <MiniLogo />
+              <View style={styles.infosContainer}>
+                <Text style={styles.infosTitle}>
+                  O que saber antes de tomar?
+                </Text>
+                {infos.cuidados_antes_bula.map((paragrafo, index) => (
+                  <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                    {paragrafo}
+                  </Text>
+                ))}
+                
+              </View>
+              <View style={{ height: 225 }}>
+              <Text style={styles.carouselContainerTitle}>
+                  Mais informações
+                </Text>
+              <FlatList 
+                      data={dataFock}
+                      keyExtractor={item => item.title}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      renderItem={({item}) => {
+                        return (
+                          <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                              <Text style={styles.carouselTitle}>{item.title}</Text>
+                              <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                          </TouchableOpacity>
+                        )
+                      }}
+                      style={{ width: 325 }}
+                    />
+              </View>
+            </View>
+          </ScrollView>
+        );
+      break;
+
+      case "Armazenado" : 
+        return (
+          <ScrollView>
+            <View style={styles.container}>
+              <MiniLogo />
+              <View style={styles.infosContainer}>
+                <Text style={styles.infosTitle}>
+                  Como deve ser armazenado?
+                </Text>
+                {infos.armazenamento_bula.map((paragrafo, index) => (
+                  <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                    {paragrafo}
+                  </Text>
+                ))}
+                
+              </View>
+              <View style={{ height: 225 }}>
+              <Text style={styles.carouselContainerTitle}>
+                  Mais informações
+                </Text>
+              <FlatList 
+                      data={dataFock}
+                      keyExtractor={item => item.title}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      renderItem={({item}) => {
+                        return (
+                          <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                              <Text style={styles.carouselTitle}>{item.title}</Text>
+                              <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                          </TouchableOpacity>
+                        )
+                      }}
+                      style={{ width: 325 }}
+                    />
+              </View>
+            </View>
+          </ScrollView>
+        );
+      break;
+
+      case "ComoUsar": 
+      return (
+        <ScrollView>
+          <View style={styles.container}>
+            <MiniLogo />
+            <View style={styles.infosContainer}>
+              <Text style={styles.infosTitle}>
+                Como devo usar?
+              </Text>
+              {infos.como_usar_bula.map((paragrafo, index) => (
+                <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                  {paragrafo}
+                </Text>
+              ))}
+              
+            </View>
+            <View style={{ height: 225 }}>
+            <Text style={styles.carouselContainerTitle}>
+                Mais informações
+              </Text>
+            <FlatList 
+                    data={dataFock}
+                    keyExtractor={item => item.title}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => {
+                      return (
+                        <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                            <Text style={styles.carouselTitle}>{item.title}</Text>
+                            <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    style={{ width: 325 }}
+                  />
+            </View>
+          </View>
+        </ScrollView>
+      );
+      break;
+      
+      case "Esquecer": 
+      return (
+        <ScrollView>
+          <View style={styles.container}>
+            <MiniLogo />
+            <View style={styles.infosContainer}>
+              <Text style={styles.infosTitle}>
+                O que fazer quando esquecer?
+              </Text>
+              {infos.esqueceu_bula.map((paragrafo, index) => (
+                <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                  {paragrafo}
+                </Text>
+              ))}
+              
+            </View>
+            <View style={{ height: 225 }}>
+            <Text style={styles.carouselContainerTitle}>
+                Mais informações
+              </Text>
+            <FlatList 
+                    data={dataFock}
+                    keyExtractor={item => item.title}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => {
+                      return (
+                        <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                            <Text style={styles.carouselTitle}>{item.title}</Text>
+                            <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    style={{ width: 325 }}
+                  />
+            </View>
+          </View>
+        </ScrollView>
+      );
+      break;
+
+      case "Maleficios": 
+      return (
+        <ScrollView>
+          <View style={styles.container}>
+            <MiniLogo />
+            <View style={styles.infosContainer}>
+              <Text style={styles.infosTitle}>
+                Quais os malefícios?
+              </Text>
+              {infos.efeitos_colaterais_bula.map((paragrafo, index) => (
+                <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                  {paragrafo}
+                </Text>
+              ))}
+              
+            </View>
+            <View style={{ height: 225 }}>
+            <Text style={styles.carouselContainerTitle}>
+                Mais informações
+              </Text>
+            <FlatList 
+                    data={dataFock}
+                    keyExtractor={item => item.title}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => {
+                      return (
+                        <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                            <Text style={styles.carouselTitle}>{item.title}</Text>
+                            <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    style={{ width: 325 }}
+                  />
+            </View>
+          </View>
+        </ScrollView>
+      );
+      break;
+      
+      default :
+      return (
+        <ScrollView>
+          <View style={styles.container}>
+            <MiniLogo />
+            <View style={styles.infosContainer}>
+              <Text style={styles.infosTitle}>
+                O que fazer quando esquecer?
+              </Text>
+              {infos.superdose_bula.map((paragrafo, index) => (
+                <Text key={index} style={[styles.paraQueServeTexto, { marginBottom: 10 }]}>
+                  {paragrafo}
+                </Text>
+              ))}
+              
+            </View>
+            <View style={{ height: 225 }}>
+            <Text style={styles.carouselContainerTitle}>
+                Mais informações
+              </Text>
+            <FlatList 
+                    data={dataFock}
+                    keyExtractor={item => item.title}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => {
+                      return (
+                        <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                            <Text style={styles.carouselTitle}>{item.title}</Text>
+                            <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    style={{ width: 325 }}
+                  />
+            </View>
+          </View>
+        </ScrollView>
+      );
+      break;
+      break;
+    }
+    
   }
 }
 
@@ -282,6 +647,32 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight + 29,
     flexDirection: "column",
     backgroundColor: "#FFF",
+  },
+
+  carouselContainerTitle:{ 
+    marginTop: 43,
+    fontSize: 21,
+    fontFamily: "Lato-Bold",
+    color: "#005A3B",
+  },
+
+  infosContainer: {
+    width: "80%",
+  },
+
+  infosTitle: {
+    fontSize: 25,
+    fontFamily: "Lato-Bold",
+    color: "#005A3B",
+    marginTop: 28,
+    marginBottom: 18
+  },
+
+  paraQueServeTexto: {
+    textAlign: "justify",
+    color: "#8B8B8B",
+    fontFamily: "Lato-Regular",
+    fontSize: 17
   },
 
   carouselContainer: {

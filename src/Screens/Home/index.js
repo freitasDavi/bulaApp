@@ -28,8 +28,7 @@ export default function Home({ navigation }) {
     const payload = {
       search: text,
     };
-
-    console.log(payload);
+    
     navigation.navigate("SearchResults", {
       screen: "Resultados",
       params: { payload: payload },
