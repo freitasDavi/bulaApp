@@ -6,14 +6,11 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { CurrentPage } from "../../../services/otherContext";
 
 export const CarouselCardItem = ({ item, index }) => {
-  const [paginaAtual, setPaginaAtual] = React.useContext(CurrentPage);
-
   return (
-    <View style={styles.container} key={index}>
-      <TouchableOpacity>
+    <View style={styles.container} key={item.title}>
+      <TouchableOpacity onPress={item.function(item.menu)}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.subTitle}>{item.body}</Text>
       </TouchableOpacity>

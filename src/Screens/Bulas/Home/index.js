@@ -3,12 +3,10 @@ import React from "react";
 import MiniLogo from "../../../Logos/AlternateLogo";
 import Icon from "react-native-vector-icons/Feather";
 import Accordion from "react-native-collapsible/Accordion";
-import Carousel, { Pagination } from "react-native-snap-carousel";
 import {
   CurrentPage,
   CurrentPageProvider,
 } from "../../../../services/otherContext";
-import { CarouselCardItem } from "../../../components/CarouselCardItem";
 import {
   ScrollView,
   View,
@@ -18,6 +16,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  FlatList
 } from "react-native";
 
 const horizontalMargin = 20;
@@ -60,53 +59,7 @@ const CONTENT = [
   },
 ];
 
-const dataFock = [
-  {
-    title: "Para que serve?",
-    body: "Indicações de uso do medicamento.",
-    function: "ParaQue",
-  },
-  {
-    title: "Como funciona?",
-    body: "Ações do medicamento e tempo médio para ter efeito.",
-    function: "Funciona",
-  },
-  {
-    title: "Quando não usar?",
-    body: "Informações sobre as contraindicações do medicamento.",
-    function: "Quando",
-  },
-  {
-    title: "O que saber antes de tomar?",
-    body: "Advertências e precauções que se deve saber antes de tomar o medicamento.",
-    function: "Antes",
-  },
-  {
-    title: "Como deve ser armazenado?",
-    body: "Onde, como e por quanto tempo o medicamento pode ser guardado.",
-    function: "Armazenar",
-  },
-  {
-    title: "Como devo usar?",
-    body: "Indicações como usar, manusear e aplicar o medicamento.",
-    function: "Devo",
-  },
-  {
-    title: "O que fazer quando esquecer?",
-    body: "Indicações do que fazer quando esquecer de tomar o medicamento.",
-    function: "Esquecer",
-  },
-  {
-    title: "Quais os malefícios?",
-    body: "Apresentação dos males com reações adversas e sintomas.",
-    function: "Maleficios",
-  },
-  {
-    title: "O que fazer ao ter superdose?",
-    body: "Indicações do que fazer ao ter ingerido uma dose maior do que a indicada.",
-    function: "Superdose",
-  },
-];
+
 
 export default function HomeBula({ route, navigation }) {
   const [infos, setInfos] = React.useState(null);
@@ -114,6 +67,63 @@ export default function HomeBula({ route, navigation }) {
   const [index, setIndex] = React.useState(0);
   const isCarousel = React.useRef(null);
   const [paginaAtual, setPaginaAtual] = React.useContext(CurrentPage);
+
+  const dataFock = [
+    {
+      title: "Para que serve?",
+      body: "Indicações de uso do medicamento.",
+      menu: "ParaQue",
+      function: setCurrentMenu
+    },
+    {
+      title: "Como funciona?",
+      body: "Ações do medicamento e tempo médio para ter efeito.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "Quando não usar?",
+      body: "Informações sobre as contraindicações do medicamento.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "O que saber antes de tomar?",
+      body: "Advertências e precauções que se deve saber antes de tomar o medicamento.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "Como deve ser armazenado?",
+      body: "Onde, como e por quanto tempo o medicamento pode ser guardado.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "Como devo usar?",
+      body: "Indicações como usar, manusear e aplicar o medicamento.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "O que fazer quando esquecer?",
+      body: "Indicações do que fazer quando esquecer de tomar o medicamento.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "Quais os malefícios?",
+      body: "Apresentação dos males com reações adversas e sintomas.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+    {
+      title: "O que fazer ao ter superdose?",
+      body: "Indicações do que fazer ao ter ingerido uma dose maior do que a indicada.",
+      menu: "Funciona",
+      function: setCurrentMenu
+    },
+  ];
 
   accordionHeader = (section, _, isActive) => {
     return (
@@ -159,6 +169,11 @@ export default function HomeBula({ route, navigation }) {
   const setSections = (sections) => {
     setActiveSections(sections.includes(undefined) ? [] : sections);
   };
+
+  function setCurrentMenu (state) {
+    console.log(`Estamos setando o estado ${state}`);
+    setPaginaAtual(state);
+  }
 
   React.useEffect(() => {
     if (route.params.id !== null) {
@@ -221,33 +236,24 @@ export default function HomeBula({ route, navigation }) {
             </View>
 
             <View style={{ height: 230 }}>
-              <Carousel
+
+              <FlatList 
                 data={dataFock}
-                sliderWidth={310}
-                layout="default"
-                itemWidth={150}
-                ref={isCarousel}
-                renderItem={CarouselCardItem}
-                useScrollView={true}
-                activeSlideAlignment={"start"}
-                inactiveSlideScale={1}
-                inactiveSlideOpacity={1}
-              />
-              <Pagination
-                dotsLength={3}
-                activeDotIndex={index}
-                carouselRef={isCarousel}
-                dotStyle={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 5,
-                  marginHorizontal: 0,
-                  backgroundColor: "#707070",
+                keyExtractor={item => item.title}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return (
+                    <TouchableOpacity onPress={() => {setCurrentMenu(item.menu)}} style={styles.carouselContainer}>
+                        <Text style={styles.carouselTitle}>{item.title}</Text>
+                        <Text style={styles.carouselSubTitle}>{item.body}</Text>
+                    </TouchableOpacity>
+                  )
                 }}
-                inactiveDotOpacity={0.4}
-                inactiveDotScale={0.6}
-                tappableDots={true}
+                style={{ width: 325 }}
               />
+
+
             </View>
             <View style={styles.sobreContainer}>
               <Text style={styles.sobreTitulo}>Sobre o medicamento</Text>
@@ -276,6 +282,41 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight + 29,
     flexDirection: "column",
     backgroundColor: "#FFF",
+  },
+
+  carouselContainer: {
+    backgroundColor: "#008E5E",
+    borderRadius: 5,
+    width: 146,
+    height: 138,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
+    justifyContent: "space-around",
+    margin: 10,
+    paddingRight: 10,
+  },
+
+  carouselTitle: {
+    color: "#FFFFFF",
+    fontFamily: "Lato-Regular",
+    fontSize: 18,
+    paddingTop: 24,
+    paddingLeft: 9,
+  },
+
+  carouselSubTitle: {
+    color: "#FFFFFF",
+    fontFamily: "Lato-Regular",
+    fontSize: 10,
+    paddingTop: 15,
+    paddingBottom: 21,
+    paddingLeft: 9,
   },
 
   header: {
