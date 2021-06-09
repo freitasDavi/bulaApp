@@ -112,13 +112,33 @@ export default function App() {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (userName, password) => {
+      signIn: async (userName, password, userId) => {
         let userToken;
         userToken = null;
+
+        let favoritesId,
+            firstPair = [],
+            secondPair = ["userToken", userId];
         // Match the api
         userToken = "JWT";
+
+        let payload = {
+          id_usuario: userId
+        }
+
+        await axios.post("http://192.168.2.137:5000/api/favoritos/login", payload)
+        .then((response) => {
+          firstPair = ["favoriteId", response.data._id]
+        }).catch((e) => {
+          console.log(e)
+        });
+
         try {
-          await AsyncStorage.setItem("userToken", userToken);
+          console.log("========");
+          console.log(firstPair);
+          console.log(secondPair);
+          console.log("========");
+          await AsyncStorage.multiSet([firstPair, secondPair]);
         } catch (e) {
           console.log(e);
         }
@@ -137,21 +157,26 @@ export default function App() {
         let payload = {
           id_usuario: userId,
         };
-        let firstPair = [];
+        let firstPair = [],
+            fourthPair = [];
 
         await axios
-          .post("http://192.168.1.5:5000/api/favoritos", payload)
+          .post("http://192.168.2.137:5000/api/favoritos", payload)
           .then((response) => {
             if (response.status === 200) {
-              console.log(response.data._id);
               firstPair = ["favoriteId", response.data._id];
             }
           });
 
+        // await axios.post("https://192.168.2.137/api/alarmes", payload)
+        // .then((response) => {
+        //   if(response.status === 200) {
+        //     fourthPair = ["alarmId", response.data._id];
+        //   }
+        // });
+
         let secondPair = ["userToken", userToken];
         let thirdPair = ["userId", userId];
-
-        console.log(firstPair);
 
         try {
           await AsyncStorage.multiSet([firstPair, secondPair, thirdPair]);

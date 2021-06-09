@@ -39,7 +39,7 @@ export default function Login({ navigation }) {
         if (response.status === 200) {
           Alert.alert("Atenção", "Você está logado");
         }
-        signIn(data.email, data.senha);
+        signIn(data.email, data.senha, response.data.id_client);
       })
       .catch((errors) => {
         console.log(errors);

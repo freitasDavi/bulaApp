@@ -44,7 +44,7 @@ export default function Profile({ navigation }) {
   React.useEffect(() => {
     if (userId) {
       axios
-        .get(`http://192.168.1.5:5000/api/usuarios/details/${userId}`)
+        .get(`http://192.168.2.137:5000/api/usuarios/details/${userId}`)
         .then((response) => {
           console.log(response.data);
           setValue("email", response.data.email_usuario);

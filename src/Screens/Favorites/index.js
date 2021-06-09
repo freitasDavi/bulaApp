@@ -1,6 +1,7 @@
 import React from "react";
 import MiniLogo from "../../Logos/AlternateLogo";
 import axios from "axios";
+import { Star } from 'react-native-feather';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text,
@@ -15,19 +16,23 @@ import Icon from "react-native-vector-icons/Feather";
 
 export default function Favorites({ navigation }) {
   const [favorites, setFavorites] = React.useState(null);
-  const [favoritesId, setFavoritesId] = React.useState(null);
+  const [favoriteUserId, setFavoriteUserId] = React.useState(null);
 
   React.useEffect(() => {
     try {
       async function fetchData() {
         favoriteId = await AsyncStorage.getItem("favoriteId");
 
+        setFavoriteUserId(favoriteId);
+
         let payload = {
           _id: favoriteId,
         };
 
+        console.log(favoriteId);
+
         await axios
-          .post("http://192.168.1.5:5000/api/favoritos/listar", payload)
+          .post("http://192.168.2.137:5000/api/favoritos/listar", payload)
           .then((response) => {
             x = response.data;
             setFavorites(x.bulas_favoritas);
@@ -54,6 +59,19 @@ export default function Favorites({ navigation }) {
         });
       })
       .catch((err) => console.log(err));
+  };
+
+  async function removerFavoritos(id) {
+    let payload = {
+      _id: favoriteUserId,
+      id_favorito: id
+    };
+
+    await axios.post("http://192.168.2.137:5000/api/favoritos/remove", payload)
+    .then((response) => {
+      setFavorites(response.data.bulas_favoritas);
+    })
+
   }
 
   if (favorites === null) {
@@ -76,7 +94,7 @@ export default function Favorites({ navigation }) {
             <Text style={styles.tituloFavoritos}>Favoritos</Text>
             <View>
               {favorites.map((item) => (
-                <View key={item._id} elevation={5} style={styles.card}>
+                <View key={item._id+item.nome} elevation={5} style={styles.card}>
                   <View style={styles.leftCard}>
                     <Image
                       style={styles.leftCardImage}
@@ -87,7 +105,9 @@ export default function Favorites({ navigation }) {
                   </View>
                   <View style={styles.rightCard}>
                     <View style={{ alignItems: "flex-end" }}>
-                      <Icon name="star" size={15} color="#FFDD03" />
+                      <TouchableOpacity onPress={() => removerFavoritos(item._id)} >
+                        <Star width={20} fill="#ffdd03" stroke="#ffDD03" height={20} />
+                      </TouchableOpacity>
                     </View>
                     <Text style={styles.rightCardRemedio}>
                       {item.nome_bula}

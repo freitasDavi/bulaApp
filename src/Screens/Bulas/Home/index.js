@@ -3,7 +3,7 @@ import React from "react";
 import MiniLogo from "../../../Logos/AlternateLogo";
 import Icon from "react-native-vector-icons/Feather";
 import Accordion from "react-native-collapsible/Accordion";
-import Carousel, { Pagination } from "react-native-snap-carousel";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   CurrentPage,
   CurrentPageProvider,
@@ -67,6 +67,8 @@ const CONTENT = [
 export default function HomeBula({ route, navigation }) {
   const [infos, setInfos] = React.useState(null);
   const [activeSections, setActiveSections] = React.useState([]);
+  const [favoriteUserId, setFavoriteUserId] = React.useState();
+  const [favorites, setFavorites] = React.useState();
   const [index, setIndex] = React.useState(0);
   const isCarousel = React.useRef(null);
   const [paginaAtual, setPaginaAtual] = React.useState("Home");
@@ -172,18 +174,37 @@ export default function HomeBula({ route, navigation }) {
   React.useEffect(() => {
     if (route.params.id !== null) {
       console.log(route.params.id);
-      axios
-        .get(
-          `https://api-npab.herokuapp.com/api/bulas/details/${route.params.id}`
-        )
-        .then((response) => {
-          console.log(response.data);
-          setInfos(response.data);
-          console.log(infos);
-        })
-        .catch((e) => {
-          console.log(e);
+
+      async function fetchData() {
+        let favoriteId = await AsyncStorage.getItem("favoriteId");
+
+        setFavoriteUserId(favoriteId);
+
+        let payload = {
+          _id: favoriteId,
+        };
+
+        await axios
+          .post("http://192.168.2.137:5000/api/favoritos/listar", payload)
+          .then((response) => {
+            x = response.data;
+            setFavorites(x.bulas_favoritas);
         });
+
+      
+        await axios
+          .get(
+            `https://api-npab.herokuapp.com/api/bulas/details/${route.params.id}`
+          )
+          .then((response) => {
+            setInfos(response.data);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
+
+      fetchData();
     }
   }, []);
 
@@ -218,9 +239,18 @@ export default function HomeBula({ route, navigation }) {
                   <Text style={styles.rightCardInfo}>
                     {infos.composicao_bula}
                   </Text>
-                  <TouchableOpacity style={styles.rightCardButton}>
+                  {isFavorito = favorites.filter((item) => {
+                    item._id == infos._id
+                  }) ? (
+                    <TouchableOpacity style={styles.rightCardButton}>
+                    <Text style={styles.rightCardButtonText}>REMOVER FAVORITO</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.rightCardButton}>
                     <Text style={styles.rightCardButtonText}>FAVORITAR</Text>
                   </TouchableOpacity>
+                  ) }
+                  
                 </View>
               </View>
               {/* Atenção */}
