@@ -40,7 +40,9 @@ export default function Favorites({ navigation }) {
       }
 
       fetchData();
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   }, []);
 
   async function navigateToBula(nome_bula) {

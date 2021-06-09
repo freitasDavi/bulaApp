@@ -118,7 +118,8 @@ export default function App() {
 
         let favoritesId,
             firstPair = [],
-            secondPair = ["userToken", userId];
+            secondPair = ["userToken", userId],
+            thirdPair = [];
         // Match the api
         userToken = "JWT";
 
@@ -133,12 +134,15 @@ export default function App() {
           console.log(e)
         });
 
+        await axios.post("http://192.168.2.137:5000/api/alarmes/login", payload)
+        .then((response) => {
+          thirdPair = ["alarmId", response.data._id]
+        }).catch((e) => {
+          console.log(e)
+        })
+
         try {
-          console.log("========");
-          console.log(firstPair);
-          console.log(secondPair);
-          console.log("========");
-          await AsyncStorage.multiSet([firstPair, secondPair]);
+          await AsyncStorage.multiSet([firstPair, secondPair, thirdPair]);
         } catch (e) {
           console.log(e);
         }
@@ -168,18 +172,18 @@ export default function App() {
             }
           });
 
-        // await axios.post("https://192.168.2.137/api/alarmes", payload)
-        // .then((response) => {
-        //   if(response.status === 200) {
-        //     fourthPair = ["alarmId", response.data._id];
-        //   }
-        // });
+        await axios.post("https://192.168.2.137/api/alarmes", payload)
+        .then((response) => {
+          if(response.status === 200) {
+            fourthPair = ["alarmId", response.data._id];
+          }
+        });
 
         let secondPair = ["userToken", userToken];
         let thirdPair = ["userId", userId];
 
         try {
-          await AsyncStorage.multiSet([firstPair, secondPair, thirdPair]);
+          await AsyncStorage.multiSet([firstPair, secondPair, thirdPair, fourthPair]);
         } catch (e) {
           console.log(e);
         }

@@ -1,9 +1,38 @@
 import React from "react";
 import { ScrollView, View, StatusBar, StyleSheet } from "react-native";
 import { Text, FAB } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import MiniLogo from "../../Logos/AlternateLogo";
+import axios from "axios";
 
 export default function Alarm({ navigation }) {
+  const [alarms, setAlarms] = React.useState(null);
+  const [alarmUserId, setAlarmUserId] = React.useState(null);
+
+  React.useEffect(() => {
+    try {
+      async function fetchData() {
+        alarmId = await AsyncStorage.getItem("alarmId");
+
+        setAlarmUserId(alarmUserId);
+
+        let payload = {
+          _id: alarmId
+        };
+
+        await axios.post("http://192.168.2.137:5000/api/alarmes/listar", payload)
+        .then((response) => {
+          x = response.data;
+          setAlarms(x.alarmes);
+        });
+      }
+
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   return (
     <>
       <ScrollView>
