@@ -1,5 +1,7 @@
 import React from "react";
 import MiniLogo from "../../Logos/AlternateLogo";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text,
   View,
@@ -11,40 +13,104 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-export default function Favorites() {
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-        <MiniLogo />
-        <View style={styles.favoritosContainer}>
-          <Text style={styles.tituloFavoritos}>Favoritos</Text>
-          <View>
-            <View elevation={5} style={styles.card}>
-              <View style={styles.leftCard}>
-                <Image
-                  style={styles.leftCardImage}
-                  source={{
-                    uri: "https://uploads.consultaremedios.com.br/product_variation_images/full/becc4de4188cc5aaa759931dd0f8fef4811d1012.jpg?1606493189",
-                  }}
-                />
-              </View>
-              <View style={styles.rightCard}>
-                <View style={{ alignItems: "flex-end" }}>
-                  <Icon name="star" size={15} color="#FFDD03" />
+export default function Favorites({ navigation }) {
+  const [favorites, setFavorites] = React.useState(null);
+  const [favoritesId, setFavoritesId] = React.useState(null);
+
+  React.useEffect(() => {
+    try {
+      async function fetchData() {
+        favoriteId = await AsyncStorage.getItem("favoriteId");
+
+        let payload = {
+          _id: favoriteId,
+        };
+
+        await axios
+          .post("http://192.168.1.5:5000/api/favoritos/listar", payload)
+          .then((response) => {
+            x = response.data;
+            setFavorites(x.bulas_favoritas);
+          });
+      }
+
+      fetchData();
+    } catch (e) {}
+  }, []);
+
+  async function navigateToBula(nome_bula) {
+    let payload = {
+      search: nome_bula,
+    };
+
+    await axios
+      .post("https://api-npab.herokuapp.com/api/bulas/find", payload)
+      .then((response) => {
+        navigation.navigate("SearchResults", {
+          screen: "HomeBula",
+          params: {
+            id: response.data[0]._id,
+          },
+        });
+      })
+      .catch((err) => console.log(err));
+  }
+
+  if (favorites === null) {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+          <MiniLogo />
+          <View style={styles.favoritosContainer}>
+            <Text style={styles.tituloFavoritos}>Favoritos</Text>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  } else {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+          <MiniLogo />
+          <View style={styles.favoritosContainer}>
+            <Text style={styles.tituloFavoritos}>Favoritos</Text>
+            <View>
+              {favorites.map((item) => (
+                <View key={item._id} elevation={5} style={styles.card}>
+                  <View style={styles.leftCard}>
+                    <Image
+                      style={styles.leftCardImage}
+                      source={{
+                        uri: item.url_imagem,
+                      }}
+                    />
+                  </View>
+                  <View style={styles.rightCard}>
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Icon name="star" size={15} color="#FFDD03" />
+                    </View>
+                    <Text style={styles.rightCardRemedio}>
+                      {item.nome_bula}
+                    </Text>
+                    <Text style={styles.rightCardInfo}>
+                      {item.composicao_bula}
+                    </Text>
+                    <Text style={styles.rightCardInfo2}>{item.generico}</Text>
+                    <TouchableOpacity
+                      style={styles.rightCardButton}
+                      onPress={() => navigateToBula(item.nome_bula)}
+                    >
+                      <Text style={styles.rightCardButtonText}>VER BULA</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <Text style={styles.rightCardRemedio}>Paracetamol</Text>
-                <Text style={styles.rightCardInfo}>750mg</Text>
-                <Text style={styles.rightCardInfo2}>Medicamento genérico</Text>
-                <TouchableOpacity style={styles.rightCardButton}>
-                  <Text style={styles.rightCardButtonText}>VER BULA</Text>
-                </TouchableOpacity>
-              </View>
+              ))}
             </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
-  );
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

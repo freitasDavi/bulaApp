@@ -89,13 +89,16 @@ export default function Cadastro({ navigation }) {
 
     console.log(payload);
 
+    let results;
+
     axios
-      .post("https://api-npab.herokuapp.com/api/usuarios", payload)
+      .post("http://192.168.1.5:5000/api/usuarios", payload)
       .then((response) => {
         if (response.status === 200) {
           console.log("tu é bom demais maluco");
           console.log(response);
-          signUp(response.data._id);
+          results = response.data._id;
+          signUp(results);
         }
       })
       .catch((e) => {

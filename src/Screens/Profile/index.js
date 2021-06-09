@@ -3,6 +3,7 @@ import MiniLogo from "../../Logos/AlternateLogo";
 import { useForm, Controller } from "react-hook-form";
 import { Text, Button, Avatar, TextInput } from "react-native-paper";
 import { Authentication } from "../../../services/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, StyleSheet, StatusBar, ScrollView } from "react-native";
 import axios from "axios";
 
@@ -11,6 +12,8 @@ const EMAIL_REGEX =
 
 export default function Profile({ navigation }) {
   const { signOut } = React.useContext(Authentication);
+  const [data, setData] = React.useState();
+  const [userId, setUserId] = React.useState();
   const {
     control,
     handleSubmit,
@@ -21,6 +24,37 @@ export default function Profile({ navigation }) {
   function handleLogOut() {
     signOut();
   }
+
+  React.useEffect(() => {
+    try {
+      async function fetchData() {
+        teste = await AsyncStorage.getItem("userId");
+
+        if (teste !== undefined) {
+          setUserId(teste);
+        }
+      }
+
+      fetchData();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (userId) {
+      axios
+        .get(`http://192.168.1.5:5000/api/usuarios/details/${userId}`)
+        .then((response) => {
+          console.log(response.data);
+          setValue("email", response.data.email_usuario);
+          setValue("senha", response.data.senha_usuario);
+          // setValue("alergias", response.data.alergia_usuario);
+          setValue("nascimento", response.data.nascimento_usuario);
+          setData(response.data);
+        });
+    }
+  }, [userId]);
 
   const onSubmit = async (data) => {
     let payload = {
@@ -35,11 +69,6 @@ export default function Profile({ navigation }) {
       .then((response) => {
         if (response.status === 200) {
           let data = response.data;
-
-          setValue("email", data.email_usuario);
-          setValue("senha", data.senha_usuario);
-          setValue("alergias", data.alergia_usuario);
-          setValue("nascimento", data.nascimento_usuario);
         }
       })
       .catch((e) => {
@@ -83,6 +112,7 @@ export default function Profile({ navigation }) {
                   value={value}
                   error={errors.email}
                   errorText={errors?.email?.message}
+                  disabled={true}
                   placeholder="exemplo@exemplo.com"
                   mode="outlined"
                   placeholderTextColor="#8B8B8B"
@@ -129,6 +159,7 @@ export default function Profile({ navigation }) {
                   error={errors.senha}
                   errorText={errors?.senha?.message}
                   placeholder="senha"
+                  disabled={true}
                   mode="outlined"
                   placeholderTextColor="#8B8B8B"
                   secureTextEntry

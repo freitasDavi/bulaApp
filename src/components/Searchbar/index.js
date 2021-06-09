@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Searchbar as RNPSearchbar } from "react-native-paper";
-import axios from "axios";
 
 import Icon from "react-native-vector-icons/FontAwesome5";
 

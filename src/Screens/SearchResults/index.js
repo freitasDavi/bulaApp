@@ -32,7 +32,7 @@ export default function SearchResults({ route, navigation }) {
         .then((response) => {
           let _results = [...resultados];
 
-          if(response.data[0] === undefined) {
+          if (response.data[0] === undefined) {
             setNaoPossuiResultados(true);
             // setIsLoaded(true);
             console.log("Não foram encontrados resultados para sua pesquisa");
@@ -56,8 +56,6 @@ export default function SearchResults({ route, navigation }) {
   }, []);
 
   function navigateToBula(id) {
-    console.log("infERNO");
-    console.log(id);
     navigation.navigate("SearchResults", {
       screen: "HomeBula",
       params: {
@@ -74,35 +72,35 @@ export default function SearchResults({ route, navigation }) {
     );
   } else {
     if (!naoPossuiResultados) {
-    return (
-      <View style={styles.container}>
-        <MiniLogo />
-        <Text>Resultados</Text>
-        {resultados.map((item) => {
-          if (item.nome.length === 0) {
-            return <View key={item.nome}></View>;
-          } else {
-            return (
-              <TouchableOpacity
-                key={item.nome}
-                style={styles.listItem}
-                onPress={() => navigateToBula(item.id)}
-              >
-                <Text style={styles.titulo}>{item.nome}</Text>
-                <Text style={styles.composicao}>{item.composicao}</Text>
-              </TouchableOpacity>
-            );
-          }
-        })}
-      </View>
-    );
+      return (
+        <View style={styles.container}>
+          <MiniLogo />
+          <Text>Resultados</Text>
+          {resultados.map((item) => {
+            if (item.nome.length === 0) {
+              return <View key={item.nome}></View>;
+            } else {
+              return (
+                <TouchableOpacity
+                  key={item.nome}
+                  style={styles.listItem}
+                  onPress={() => navigateToBula(item.id)}
+                >
+                  <Text style={styles.titulo}>{item.nome}</Text>
+                  <Text style={styles.composicao}>{item.composicao}</Text>
+                </TouchableOpacity>
+              );
+            }
+          })}
+        </View>
+      );
     } else {
       return (
         <View style={styles.container}>
           <MiniLogo />
           <Text>Não foram encontrados resultados para sua pesquisa</Text>
         </View>
-      )
+      );
     }
   }
 }

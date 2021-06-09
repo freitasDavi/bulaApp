@@ -1,5 +1,6 @@
 import React from "react";
 import * as Font from "expo-font";
+import axios from "axios";
 import Login from "./src/Screens/Login";
 import { ActivityIndicator, View } from "react-native";
 import {
@@ -130,17 +131,35 @@ export default function App() {
         } catch (e) {}
         dispatch({ type: "LOGOUT" });
       },
-      signUp: async (userName) => {
+      signUp: async (userId) => {
         let userToken;
         userToken = "JWT";
+        let payload = {
+          id_usuario: userId,
+        };
+        let firstPair = [];
+
+        await axios
+          .post("http://192.168.1.5:5000/api/favoritos", payload)
+          .then((response) => {
+            if (response.status === 200) {
+              console.log(response.data._id);
+              firstPair = ["favoriteId", response.data._id];
+            }
+          });
+
+        let secondPair = ["userToken", userToken];
+        let thirdPair = ["userId", userId];
+
+        console.log(firstPair);
 
         try {
-          await AsyncStorage.setItem("userToken", userToken);
+          await AsyncStorage.multiSet([firstPair, secondPair, thirdPair]);
         } catch (e) {
           console.log(e);
         }
 
-        dispatch({ type: "REGISTER", id: userName, token: userToken });
+        dispatch({ type: "REGISTER", id: userId, token: userToken });
       },
     }),
     []
