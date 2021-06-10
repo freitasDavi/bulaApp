@@ -12,7 +12,8 @@ const EMAIL_REGEX =
 
 export default function Profile({ navigation }) {
   const { signOut } = React.useContext(Authentication);
-  const [data, setData] = React.useState();
+  const [dados, setDados] = React.useState(null);
+  const [iniciais, setIniciais] = React.useState("");
   const [userId, setUserId] = React.useState();
   const {
     control,
@@ -44,15 +45,18 @@ export default function Profile({ navigation }) {
   React.useEffect(() => {
     if (userId) {
       axios
-        .get(`http://192.168.1.5:5000/api/usuarios/details/${userId}`)
+        .get(`https://api-npab.herokuapp.com/api/usuarios/details/${userId}`)
         .then((response) => {
-          console.log(response.data);
           setValue("email", response.data.email_usuario);
           setValue("senha", "password");
-          console.log(response.data.alergia_usuario);
           setValue("alergias", response.data.alergia_usuario.join());
           setValue("nascimento", response.data.nascimento_usuario);
-          setData(response.data);
+          console.log(response.data.nome_usuario);
+          let splitWords = response.data.nome_usuario.split(' '),
+              letIniciais = splitWords[0][0]+splitWords[1][0];
+
+          setIniciais(letIniciais);
+          setDados(response.data);
         });
     }
   }, [userId]);
@@ -67,13 +71,13 @@ export default function Profile({ navigation }) {
     };
 
     axios
-      .put("http://192.168.1.5:5000/api/usuarios", payload)
+      .put("https://api-npab.herokuapp.com/api/usuarios", payload)
       .then((response) => {
         if (response.status === 200) {
           let dataItem = response.data;
 
           console.log(dataItem);
-          setData(dataItem);
+          setDados(dataItem);
         }
       })
       .catch((e) => {
@@ -81,138 +85,155 @@ export default function Profile({ navigation }) {
       });
   };
 
-  return (
-    <ScrollView>
+  if(dados === null) {
+    return (
+      <ScrollView>
       <View style={styles.outerContainer}>
         <View style={{ marginTop: 29 }}>
           <MiniLogo />
         </View>
-        <View style={styles.userContainer}>
-          <Avatar.Text
-            size={78}
-            label="DF"
-            color="#005A3B"
-            style={{ backgroundColor: "#008E5E" }}
-          />
-          <Text style={styles.userContainerLabel}>Davi Freitas</Text>
         </View>
-
-        <View style={styles.formsContainer}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>E-mail: </Text>
-            <Controller
-              defaultValue=""
-              name="email"
-              control={control}
-              rules={{
-                required: { value: true, message: "Email é obrigatório" },
-                pattern: {
-                  value: EMAIL_REGEX,
-                  message: "Not a valid email",
-                },
-              }}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  onChangeText={(text) => onChange(text)}
-                  value={value}
-                  error={errors.email}
-                  errorText={errors?.email?.message}
-                  // disabled={true}
-                  placeholder="exemplo@exemplo.com"
-                  mode="outlined"
-                  placeholderTextColor="#8B8B8B"
-                />
-              )}
+        </ScrollView>
+    )
+  } else {
+    return (
+      <ScrollView>
+        <View style={styles.outerContainer}>
+          <View style={{ marginTop: 29 }}>
+            <MiniLogo />
+          </View>
+          <View style={styles.userContainer}>
+            <Avatar.Text
+              size={78}
+              label={iniciais}
+              color="#005A3B"
+              style={{ backgroundColor: "#008E5E" }}
             />
+            <Text style={styles.userContainerLabel}>{dados.nome_usuario}</Text>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Data de nascimento:</Text>
+          <View style={styles.formsContainer}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>E-mail: </Text>
+              <Controller
+                defaultValue=""
+                name="email"
+                control={control}
+                rules={{
+                  required: { value: true, message: "Email é obrigatório" },
+                  pattern: {
+                    value: EMAIL_REGEX,
+                    message: "Not a valid email",
+                  },
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    onChangeText={(text) => onChange(text)}
+                    value={value}
+                    outlineColor="#bdbdbd"
+                    style={styles.textInput}
+                    error={errors.email}
+                    errorText={errors?.email?.message}
+                    // disabled={true}
+                    placeholder="exemplo@exemplo.com"
+                    mode="outlined"
+                    placeholderTextColor="#8B8B8B"
+                  />
+                )}
+              />
+            </View>
 
-            <Controller
-              defaultValue=""
-              name="nascimento"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  onChangeText={(text) => onChange(text)}
-                  value={value}
-                  error={errors.nascimento}
-                  errorText={errors?.nascimento?.message}
-                  placeholder="00/00/0000"
-                  mode="outlined"
-                  placeholderTextColor="#8B8B8B"
-                />
-              )}
-            />
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Data de nascimento:</Text>
+
+              <Controller
+                defaultValue=""
+                name="nascimento"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    onChangeText={(text) => onChange(text)}
+                    value={value}
+                    outlineColor="#bdbdbd"
+                    error={errors.nascimento}
+                    errorText={errors?.nascimento?.message}
+                    placeholder="00/00/0000"
+                    mode="outlined"
+                    placeholderTextColor="#8B8B8B"
+                  />
+                )}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Senha: </Text>
+
+              <Controller
+                defaultValue=""
+                name="senha"
+                control={control}
+                rules={{
+                  required: { value: true, message: "Password is required" },
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    onChangeText={(text) => onChange(text)}
+                    value={value}
+                    outlineColor="#bdbdbd"
+                    error={errors.senha}
+                    errorText={errors?.senha?.message}
+                    placeholder="senha"
+                    disabled={true}
+                    mode="outlined"
+                    placeholderTextColor="#8B8B8B"
+                    secureTextEntry
+                  />
+                )}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Alergias e intolerâncias:</Text>
+
+              <Controller
+                defaultValue=""
+                name="alergias"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    onChangeText={(text) => onChange(text)}
+                    value={value}
+                    outlineColor="#bdbdbd"
+                    error={errors.alergias}
+                    errorText={errors?.alergias?.message}
+                    placeholder="Penicilina, Ibuprofeno, Aspirina, lactose."
+                    mode="outlined"
+                    placeholderTextColor="#8B8B8B"
+                  />
+                )}
+              />
+            </View>
           </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Senha: </Text>
-
-            <Controller
-              defaultValue=""
-              name="senha"
-              control={control}
-              rules={{
-                required: { value: true, message: "Password is required" },
-              }}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  onChangeText={(text) => onChange(text)}
-                  value={value}
-                  error={errors.senha}
-                  errorText={errors?.senha?.message}
-                  placeholder="senha"
-                  disabled={true}
-                  mode="outlined"
-                  placeholderTextColor="#8B8B8B"
-                  secureTextEntry
-                />
-              )}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Alergias e intolerâncias:</Text>
-
-            <Controller
-              defaultValue=""
-              name="alergias"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  onChangeText={(text) => onChange(text)}
-                  value={value}
-                  error={errors.alergias}
-                  errorText={errors?.alergias?.message}
-                  placeholder="Penicilina, Ibuprofeno, Aspirina, lactose."
-                  mode="outlined"
-                  placeholderTextColor="#8B8B8B"
-                />
-              )}
-            />
+          <View style={styles.buttonsContainer}>
+            <Button
+              onPress={() => handleLogOut()}
+              mode="contained"
+              style={styles.botaoCadastro2}
+            >
+              <Text style={{ color: "#005A3B", fontSize: 13 }}>SAIR DA CONTA</Text>
+            </Button>
+            <Button
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+              style={styles.botaoCadastro}
+            >
+              <Text style={{ color: "#fff", fontSize: 15 }}>SALVAR</Text>
+            </Button>
           </View>
         </View>
-        <View style={styles.buttonsContainer}>
-          <Button
-            onPress={() => handleLogOut()}
-            mode="contained"
-            style={styles.botaoCadastro2}
-          >
-            <Text style={{ color: "#fff" }}>Logout</Text>
-          </Button>
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            style={styles.botaoCadastro}
-          >
-            <Text style={{ color: "#fff" }}>Salvar</Text>
-          </Button>
-        </View>
-      </View>
-    </ScrollView>
-  );
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -220,6 +241,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: StatusBar.currentHeight,
     flexDirection: "column",
+  },
+
+  textInput: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
   },
 
   userContainer: {
@@ -260,14 +292,18 @@ const styles = StyleSheet.create({
   },
 
   botaoCadastro: {
-    width: 90,
-    height: 30,
+    width: 147,
+    height: 36,
     justifyContent: "center",
+    backgroundColor: "#008E5E",
+    borderColor: "#005A3B"
   },
 
   botaoCadastro2: {
-    width: 100,
-    height: 30,
+    width: 147,
+    height: 36,
     justifyContent: "center",
+    backgroundColor: "#fff",
+    borderColor: "#005A3B"
   },
 });

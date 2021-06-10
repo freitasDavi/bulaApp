@@ -45,7 +45,7 @@ export default function Home({ navigation }) {
           barCode: data,
         };
         axios
-          .post("http://192.168.1.5:5000/api/bulas/codigoBarras", payload)
+          .post("https://api-npab.herokuapp.com/api/bulas/codigoBarras", payload)
           .then((response) => {
             setBuscaRecente(response.data[0]);
             navigation.navigate("SearchResults", {

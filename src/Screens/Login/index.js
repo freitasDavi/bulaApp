@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
     };
 
     axios
-      .post("http://192.168.1.5:5000/api/usuarios/login", payload)
+      .post("https://api-npab.herokuapp.com/api/usuarios/login", payload)
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
@@ -70,6 +70,7 @@ export default function Login({ navigation }) {
                   style={{ height: 50 }}
                   value={value}
                   error={errors.email}
+                  outlineColor="#bdbdbd"
                   errorText={errors?.email?.message}
                   placeholder="Email"
                 />
@@ -94,6 +95,7 @@ export default function Login({ navigation }) {
                   onChangeText={(text) => onChange(text)}
                   value={value}
                   style={{ height: 50 }}
+                  outlineColor="#bdbdbd"
                   error={errors.senha}
                   errorText={errors?.senha?.message}
                   placeholder="Senha"

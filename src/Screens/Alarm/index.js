@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View, StatusBar, StyleSheet } from "react-native";
+import { ScrollView, View, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, FAB } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MiniLogo from "../../Logos/AlternateLogo";
@@ -23,25 +23,13 @@ export default function Alarm({ navigation }) {
         };
 
         await axios
-          .post("http://192.168.1.5:5000/api/alarmes/listar", payload)
+          .post("https://api-npab.herokuapp.com/api/alarmes/listar", payload)
           .then((response) => {
-            x = response.data;
+            x = response.data.alarmes;
             if (x !== null) {
-              // let intervaloHoras = parseInt(x.alarmes[0].intervalor_horas);
-              // let numeroDeVezes = Math.round(24 / intervaloHoras);
-              // let horarios = [];
-
-              // console.log();
-              // for (let y = numeroDeVezes; y >= 1; y--) {
-              //   let hora = Math.round(24 / y);
-              //   horarios.push(hora);
-              // }
-
-              // setTimeout(() => {
-              // console.log(horarios);
+              console.log(x);
 
               setAlarms(x);
-              // }, 1000);
             }
           });
       }
@@ -52,7 +40,16 @@ export default function Alarm({ navigation }) {
     }
   }, []);
 
-  if (alarms === null || alarms.length !== 0) {
+  const visualizarAlarme = async (item) => {
+    navigation.navigate("Alarm", {
+      screen: "ViewAlarm",
+      params: {
+        item: item,
+      },
+    });
+  }
+
+  if (alarms === null) {
     return (
       <View style={{ height: "100%" }}>
         <ScrollView>
@@ -92,36 +89,36 @@ export default function Alarm({ navigation }) {
               <Text style={styles.tituloAlarme}>Lembretes ativos</Text>
               {/* Aqui que vai o loop */}
               {alarms.map((item) => (
-                <View style={{ marginBottom: 40 }} key={item.id_alarme}>
-                  <View style={styles.horariosAlarme}>
-                    <Text style={styles.horarios}>
-                      {Math.round(24 / item.intervalor_horas)}h |{" "}
-                      {Math.round(24 / item.intervalor_horas) +
-                        item.intervalor_horas +
-                        "h |"}{" "}
-                      1:00h
-                    </Text>
-                    <Text style={styles.quantasHoras}>
-                      {item.intervalor_horas} em {item.intervalor_horas} horas
-                    </Text>
-                  </View>
-                  <View style={styles.infosRemedio}>
-                    <View style={styles.infosRemedioLeft}>
-                      <Text style={styles.infosRemedioLeftText}>
-                        {item.nome_medicamento}
+                <TouchableOpacity key={item.id_alarme} onPress={() => visualizarAlarme(item)}>
+                  <View style={{ marginBottom: 40 }} >
+                    <View style={styles.horariosAlarme}>
+                      <Text style={styles.horarios}>
+                        {item.horario_inicial}h |{" "}
+                        {parseInt(item.horario_inicial) + parseInt(item.intervalor_horas)}"h |{" "}
+                        {parseInt(item.horario_inicial) + (parseInt(item.intervalor_horas)) * 2} 
+                      </Text>
+                      <Text style={styles.quantasHoras}>
+                        {item.intervalor_horas} em {item.intervalor_horas} horas
                       </Text>
                     </View>
-                    <View style={styles.infosRemedioRight}>
-                      <Text style={styles.infosRemedioRightText}>
-                        Duração: {item.dias_tratamento} dias
-                      </Text>
-                      <Text style={styles.infosRemedioRightText}>
-                        Quantidade: {Math.round(24 / item.intervalor_horas)}x ao
-                        dia
-                      </Text>
+                    <View style={styles.infosRemedio}>
+                      <View style={styles.infosRemedioLeft}>
+                        <Text style={styles.infosRemedioLeftText}>
+                          {item.nome_medicamento}
+                        </Text>
+                      </View>
+                      <View style={styles.infosRemedioRight}>
+                        <Text style={styles.infosRemedioRightText}>
+                          Duração: {item.dias_tratamento} dias
+                        </Text>
+                        <Text style={styles.infosRemedioRightText}>
+                          Quantidade: {Math.round(24 / parseInt(item.intervalor_horas))}x ao
+                          dia
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
               {/* Fim do loop */}
             </View>

@@ -153,7 +153,7 @@ export default function HomeBula({ route, navigation }) {
         };
 
         await axios
-          .post("http://192.168.1.5:5000/api/favoritos/listar", payload)
+          .post("https://api-npab.herokuapp.com/api/favoritos/listar", payload)
           .then((response) => {
             x = response.data;
             if (x !== null) {
@@ -272,7 +272,7 @@ export default function HomeBula({ route, navigation }) {
     };
 
     await axios
-      .post("http://192.168.1.5:5000/api/favoritos/add", payload)
+      .post("https://api-npab.herokuapp.com/api/favoritos/add", payload)
       .then((response) => {
         setFavorites(response.data.bulas_favoritas);
         setEstaFavoritado(true);
@@ -288,7 +288,7 @@ export default function HomeBula({ route, navigation }) {
     console.log("tentando desfavoritar");
 
     await axios
-      .post("http://192.168.1.5:5000/api/favoritos/remove", payload)
+      .post("https://api-npab.herokuapp.com/api/favoritos/remove", payload)
       .then((response) => {
         setFavorites(response.data.bulas_favoritas);
         setEstaFavoritado(false);

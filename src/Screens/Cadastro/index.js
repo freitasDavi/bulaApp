@@ -78,7 +78,7 @@ export default function Cadastro({ navigation }) {
     });
 
     let payload = {
-      nome_usuario: data.name + data.sobrenome,
+      nome_usuario: data.name + " " + data.sobrenome,
       email_usuario: data.email,
       tipo_usuario: 1,
       senha_usuario: data.senha,
@@ -92,7 +92,7 @@ export default function Cadastro({ navigation }) {
     let results;
 
     axios
-      .post("http://192.168.1.5:5000/api/usuarios", payload)
+      .post("https://api-npab.herokuapp.com/api/usuarios", payload)
       .then((response) => {
         if (response.status === 200) {
           console.log("tu é bom demais maluco");
@@ -125,6 +125,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={(text) => onChange(text)}
                 value={value}
                 error={errors.name}
+                outlineColor="#bdbdbd"
                 errorText={errors?.name?.message}
                 placeholder="Digite aqui seu nome"
                 mode="outlined"
@@ -148,6 +149,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={(text) => onChange(text)}
                 value={value}
                 error={errors.sobrenome}
+                outlineColor="#bdbdbd"
                 errorText={errors?.sobrenome?.message}
                 placeholder="Digite aqui seu sobrenome"
                 mode="outlined"
@@ -174,6 +176,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={(text) => onChange(text)}
                 value={value}
                 error={errors.email}
+                outlineColor="#bdbdbd"
                 errorText={errors?.email?.message}
                 placeholder="exemplo@exemplo.com"
                 mode="outlined"
@@ -198,6 +201,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={(text) => onChange(text)}
                 value={value}
                 error={errors.senha}
+                outlineColor="#bdbdbd"
                 errorText={errors?.senha?.message}
                 placeholder="senha"
                 mode="outlined"
@@ -223,6 +227,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={(text) => onChange(text)}
                 value={value}
                 error={errors.senhaConfirm}
+                outlineColor="#bdbdbd"
                 errorText={errors?.senhaConfirm?.message}
                 placeholder="Digite sua senha novamente"
                 mode="outlined"
@@ -245,6 +250,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={(text) => onChange(text)}
                 value={value}
                 error={errors.nascimento}
+                outlineColor="#bdbdbd"
                 errorText={errors?.nascimento?.message}
                 placeholder="00/00/0000"
                 mode="outlined"

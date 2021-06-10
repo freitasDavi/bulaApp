@@ -128,7 +128,7 @@ export default function App() {
         };
 
         await axios
-          .post("http://192.168.1.5:5000/api/favoritos/login", payload)
+          .post("https://api-npab.herokuapp.com/api/favoritos/login", payload)
           .then((response) => {
             firstPair = ["favoriteId", response.data._id];
           })
@@ -137,7 +137,7 @@ export default function App() {
           });
 
         await axios
-          .post("http://192.168.1.5:5000/api/alarmes/login", payload)
+          .post("https://api-npab.herokuapp.com/api/alarmes/login", payload)
           .then((response) => {
             thirdPair = ["alarmId", response.data._id];
           })
@@ -173,7 +173,7 @@ export default function App() {
           fourthPair = [];
 
         await axios
-          .post("http://192.168.1.5:5000/api/favoritos", payload)
+          .post("https://api-npab.herokuapp.com/api/favoritos", payload)
           .then((response) => {
             if (response.status === 200) {
               firstPair = ["favoriteId", response.data._id];
@@ -181,7 +181,7 @@ export default function App() {
           });
 
         await axios
-          .post("http://192.168.1.5:5000/api/alarmes", payload)
+          .post("https://api-npab.herokuapp.com/api/alarmes", payload)
           .then((response) => {
             if (response.status === 200) {
               fourthPair = ["alarmId", response.data._id];

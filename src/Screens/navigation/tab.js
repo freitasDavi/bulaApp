@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Alarm from "../Alarm";
+import ViewAlarm from '../ViewAlarm';
 import CreateAlarm from "../CreateAlarm";
 import Favorites from "../Favorites";
 import Home from "../Home";
@@ -96,6 +97,7 @@ export const AlarmTabs = () => {
     >
       <AlarmStack.Screen name="Alarms" component={Alarm} />
       <AlarmStack.Screen name="CreateAlarm" component={CreateAlarm} />
+      <AlarmStack.Screen name="ViewAlarm" component={ViewAlarm} />
     </AlarmStack.Navigator>
   );
 };

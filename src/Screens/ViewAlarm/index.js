@@ -8,13 +8,25 @@ import { useForm, Controller } from "react-hook-form";
 
 const HOURREGEX = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
-export default function CreateAlarm({ navigation: { goBack } }) {
+export default function ViewAlarm({ route, navigation: { goBack } }) {
   const {
     control,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
+  const [alarmData, setAlarmData] = react
+
+  React.useEffect(() => {
+    if(route.params.item !== null ) {
+      setAlarmData(route.params.item);
+      setValue("medicamento", alarmData.nome_medicamento);
+      setValue("dias", alarmData.dias_tratamento);
+      setValue("intervalo", alarmData.intervalor_horas);
+      setValue("horarioInicial", alarmData.horario_inicial);
+      setValue("comprimidosDiarios", alarmData.numero_comprimidos);
+    }
+  }, []);
 
   const onSubmit = async (data) => {
     alarmId = await AsyncStorage.getItem("alarmId");
@@ -32,8 +44,7 @@ export default function CreateAlarm({ navigation: { goBack } }) {
     };
 
     axios
-      // .post("https://api-npab.herokuapp.com/api/alarmes/add", payload)
-      .post("http://192.168.2.137:5000/api/alarmes/add", payload)
+      .post("https://api-npab.herokuapp.com/api/alarmes/add", payload)
       .then((response) => {
         if (response.status === 200) {
           let data = response.data;
@@ -44,11 +55,27 @@ export default function CreateAlarm({ navigation: { goBack } }) {
       })
       .catch((e) => {
         console.log(`Erro ${e}`);
+        goBack();
       });
   };
 
-  const handleDelete = () => {
-    console.log("Deletou");
+  const handleDelete = async () => {
+    alarmId = await AsyncStorage.getItem("alarmId");
+
+    let payload = {
+      _id: alarmId,
+      id_alarme:  alarmData.id_alarme
+    }
+
+    await axios.post("https://api-npab.herokuapp.com/api/alarmes/remove", payload)
+    .then((response) => {
+      if(response.status === 200) {
+        goBack();
+      }
+    }).catch((e) => {
+      console.log(e);
+      goBack();
+    })
   };
 
   return (
@@ -75,11 +102,11 @@ export default function CreateAlarm({ navigation: { goBack } }) {
                   <TextInput
                     onChangeText={(text) => onChange(text)}
                     value={value}
-                    outlineColor="#bdbdbd"
                     error={errors.medicamento}
                     errorText={errors?.medicamento?.message}
                     placeholder="Digite aqui o medicamento"
                     mode="outlined"
+                    outlineColor="#bdbdbd"
                     placeholderTextColor="#8B8B8B"
                   />
                 )}
@@ -102,11 +129,11 @@ export default function CreateAlarm({ navigation: { goBack } }) {
                   <TextInput
                     onChangeText={(text) => onChange(text)}
                     value={value}
-                    outlineColor="#bdbdbd"
                     error={errors.dias}
                     errorText={errors?.dias?.message}
                     placeholder="Número de dias"
                     mode="outlined"
+                    outlineColor="#bdbdbd"
                     placeholderTextColor="#8B8B8B"
                     keyboardType="numeric"
                   />
@@ -134,11 +161,11 @@ export default function CreateAlarm({ navigation: { goBack } }) {
                   <TextInput
                     onChangeText={(text) => onChange(text)}
                     value={value}
-                    outlineColor="#bdbdbd"
                     error={errors.intervalo}
                     errorText={errors?.intervalo?.message}
                     placeholder="08 horas"
                     mode="outlined"
+                    outlineColor="#bdbdbd"
                     placeholderTextColor="#8B8B8B"
                     keyboardType="number-pad"
                   />
@@ -166,10 +193,10 @@ export default function CreateAlarm({ navigation: { goBack } }) {
                   <TextInput
                     onChangeText={(text) => onChange(text)}
                     value={value}
-                    outlineColor="#bdbdbd"
                     error={errors.horarioInicial}
                     errorText={errors?.horarioInicial?.message}
                     placeholder="08:00"
+                    outlineColor="#bdbdbd"
                     mode="outlined"
                     placeholderTextColor="#8B8B8B"
                   />
@@ -193,11 +220,11 @@ export default function CreateAlarm({ navigation: { goBack } }) {
                   <TextInput
                     onChangeText={(text) => onChange(text)}
                     value={value}
-                    outlineColor="#bdbdbd"
                     error={errors.horarioInicial}
                     errorText={errors?.horarioInicial?.message}
                     placeholder="Número de comprimidos"
                     mode="outlined"
+                    outlineColor="#bdbdbd"
                     placeholderTextColor="#8B8B8B"
                     keyboardType="numeric"
                   />

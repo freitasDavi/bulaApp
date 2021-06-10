@@ -32,7 +32,7 @@ export default function Favorites({ navigation }) {
         console.log(favoriteId);
 
         await axios
-          .post("http://192.168.1.5:5000/api/favoritos/listar", payload)
+          .post("https://api-npab.herokuapp.com/api/favoritos/listar", payload)
           .then((response) => {
             x = response.data;
             if (x !== null) {
@@ -72,7 +72,7 @@ export default function Favorites({ navigation }) {
     };
 
     await axios
-      .post("http://192.168.1.5:5000/api/favoritos/remove", payload)
+      .post("https://api-npab.herokuapp.com/api/favoritos/remove", payload)
       .then((response) => {
         setFavorites(response.data.bulas_favoritas);
       });
