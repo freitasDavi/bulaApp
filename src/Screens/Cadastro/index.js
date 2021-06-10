@@ -92,7 +92,7 @@ export default function Cadastro({ navigation }) {
     let results;
 
     axios
-      .post("http://192.168.2.137:5000/api/usuarios", payload)
+      .post("http://192.168.1.5:5000/api/usuarios", payload)
       .then((response) => {
         if (response.status === 200) {
           console.log("tu é bom demais maluco");

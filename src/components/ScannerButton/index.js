@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { Button, Searchbar as RNPSearchbar } from "react-native-paper";
 import Scanner from "../Scanner";
+import axios from "axios";
 import Icon from "react-native-vector-icons/Feather";
 
-export default function ScannerButton() {
+export default function ScannerButton({ onCode }) {
   const [modalVisibile, setModalVisible] = React.useState(false);
 
-  const onCodeScanned = (type, data) => {
-    setType(type);
-    setData(data);
-    setModalVisible(false);
-  };
+  // const onCodeScanned = (type, data) => {
+  //   // setType(type);
+  //   setData(data);
+  //   setModalVisible(false);
+  // };
 
   return (
     <View>
@@ -22,7 +23,7 @@ export default function ScannerButton() {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modal}>
-          <Scanner onCodeScanned={onCodeScanned} />
+          <Scanner onCodeScanned={onCode} />
           <Button title="Cancelar" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>

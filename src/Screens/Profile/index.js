@@ -44,12 +44,13 @@ export default function Profile({ navigation }) {
   React.useEffect(() => {
     if (userId) {
       axios
-        .get(`http://192.168.2.137:5000/api/usuarios/details/${userId}`)
+        .get(`http://192.168.1.5:5000/api/usuarios/details/${userId}`)
         .then((response) => {
           console.log(response.data);
           setValue("email", response.data.email_usuario);
-          setValue("senha", response.data.senha_usuario);
-          // setValue("alergias", response.data.alergia_usuario);
+          setValue("senha", "password");
+          console.log(response.data.alergia_usuario);
+          setValue("alergias", response.data.alergia_usuario.join());
           setValue("nascimento", response.data.nascimento_usuario);
           setData(response.data);
         });
@@ -58,17 +59,21 @@ export default function Profile({ navigation }) {
 
   const onSubmit = async (data) => {
     let payload = {
+      _id: userId,
       email_usuario: data.email,
       nascimento_usuario: data.nascimento_usuario,
       senha_usuario: data.senha,
-      alergia_usuario: data.alergia,
+      alergia_usuario: data.alergias.split(),
     };
 
     axios
-      .put("https://api-npab.herokuapp.com/api/usuarios", payload)
+      .put("http://192.168.1.5:5000/api/usuarios", payload)
       .then((response) => {
         if (response.status === 200) {
-          let data = response.data;
+          let dataItem = response.data;
+
+          console.log(dataItem);
+          setData(dataItem);
         }
       })
       .catch((e) => {
@@ -112,7 +117,7 @@ export default function Profile({ navigation }) {
                   value={value}
                   error={errors.email}
                   errorText={errors?.email?.message}
-                  disabled={true}
+                  // disabled={true}
                   placeholder="exemplo@exemplo.com"
                   mode="outlined"
                   placeholderTextColor="#8B8B8B"

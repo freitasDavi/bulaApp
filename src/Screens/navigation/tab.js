@@ -8,6 +8,7 @@ import CreateAlarm from "../CreateAlarm";
 import Favorites from "../Favorites";
 import Home from "../Home";
 import Profile from "../Profile";
+import Dicionario from "../Bulas/Dicionario";
 import SearchResults from "../SearchResults";
 import HomeBula from "../Bulas/Home";
 import { CurrentPageProvider } from "../../../services/otherContext";
@@ -122,6 +123,7 @@ export const BulaStacks = () => {
           component={HomeBula}
           options={{ cardStyle: { backgroundColor: "white" } }}
         />
+        <BulaStack.Screen name="Dicionario" component={Dicionario} />
       </BulaStack.Navigator>
     </CurrentPageProvider>
   );

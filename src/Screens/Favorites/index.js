@@ -1,7 +1,7 @@
 import React from "react";
 import MiniLogo from "../../Logos/AlternateLogo";
 import axios from "axios";
-import { Star } from 'react-native-feather';
+import { Star } from "react-native-feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Text,
@@ -32,10 +32,12 @@ export default function Favorites({ navigation }) {
         console.log(favoriteId);
 
         await axios
-          .post("http://192.168.2.137:5000/api/favoritos/listar", payload)
+          .post("http://192.168.1.5:5000/api/favoritos/listar", payload)
           .then((response) => {
             x = response.data;
-            setFavorites(x.bulas_favoritas);
+            if (x !== null) {
+              setFavorites(x.bulas_favoritas);
+            }
           });
       }
 
@@ -61,28 +63,33 @@ export default function Favorites({ navigation }) {
         });
       })
       .catch((err) => console.log(err));
-  };
+  }
 
   async function removerFavoritos(id) {
     let payload = {
       _id: favoriteUserId,
-      id_favorito: id
+      id_favorito: id,
     };
 
-    await axios.post("http://192.168.2.137:5000/api/favoritos/remove", payload)
-    .then((response) => {
-      setFavorites(response.data.bulas_favoritas);
-    })
-
+    await axios
+      .post("http://192.168.1.5:5000/api/favoritos/remove", payload)
+      .then((response) => {
+        setFavorites(response.data.bulas_favoritas);
+      });
   }
 
-  if (favorites === null) {
+  if (favorites === null || favorites.length === 0) {
     return (
       <ScrollView>
         <View style={styles.container}>
           <MiniLogo />
           <View style={styles.favoritosContainer}>
             <Text style={styles.tituloFavoritos}>Favoritos</Text>
+            <View>
+              <Text style={styles.rightCardRemedio}>
+                Você não tem bulas salvas como favoritas
+              </Text>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -96,7 +103,11 @@ export default function Favorites({ navigation }) {
             <Text style={styles.tituloFavoritos}>Favoritos</Text>
             <View>
               {favorites.map((item) => (
-                <View key={item._id+item.nome} elevation={5} style={styles.card}>
+                <View
+                  key={item._id + item.nome}
+                  elevation={5}
+                  style={styles.card}
+                >
                   <View style={styles.leftCard}>
                     <Image
                       style={styles.leftCardImage}
@@ -107,8 +118,15 @@ export default function Favorites({ navigation }) {
                   </View>
                   <View style={styles.rightCard}>
                     <View style={{ alignItems: "flex-end" }}>
-                      <TouchableOpacity onPress={() => removerFavoritos(item._id)} >
-                        <Star width={20} fill="#ffdd03" stroke="#ffDD03" height={20} />
+                      <TouchableOpacity
+                        onPress={() => removerFavoritos(item._id)}
+                      >
+                        <Star
+                          width={20}
+                          fill="#ffdd03"
+                          stroke="#ffDD03"
+                          height={20}
+                        />
                       </TouchableOpacity>
                     </View>
                     <Text style={styles.rightCardRemedio}>

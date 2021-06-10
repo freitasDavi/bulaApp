@@ -117,31 +117,39 @@ export default function App() {
         userToken = null;
 
         let favoritesId,
-            firstPair = [],
-            secondPair = ["userToken", userId],
-            thirdPair = [];
+          firstPair = [],
+          secondPair = ["userToken", userId],
+          thirdPair = [];
         // Match the api
         userToken = "JWT";
 
         let payload = {
-          id_usuario: userId
-        }
+          id_usuario: userId,
+        };
 
-        await axios.post("http://192.168.2.137:5000/api/favoritos/login", payload)
-        .then((response) => {
-          firstPair = ["favoriteId", response.data._id]
-        }).catch((e) => {
-          console.log(e)
-        });
+        await axios
+          .post("http://192.168.1.5:5000/api/favoritos/login", payload)
+          .then((response) => {
+            firstPair = ["favoriteId", response.data._id];
+          })
+          .catch((e) => {
+            console.log(e);
+          });
 
-        await axios.post("http://192.168.2.137:5000/api/alarmes/login", payload)
-        .then((response) => {
-          thirdPair = ["alarmId", response.data._id]
-        }).catch((e) => {
-          console.log(e)
-        })
+        await axios
+          .post("http://192.168.1.5:5000/api/alarmes/login", payload)
+          .then((response) => {
+            thirdPair = ["alarmId", response.data._id];
+          })
+          .catch((e) => {
+            console.log(e);
+          });
 
         try {
+          console.log(firstPair);
+          console.log(secondPair);
+          console.log(thirdPair);
+
           await AsyncStorage.multiSet([firstPair, secondPair, thirdPair]);
         } catch (e) {
           console.log(e);
@@ -162,28 +170,34 @@ export default function App() {
           id_usuario: userId,
         };
         let firstPair = [],
-            fourthPair = [];
+          fourthPair = [];
 
         await axios
-          .post("http://192.168.2.137:5000/api/favoritos", payload)
+          .post("http://192.168.1.5:5000/api/favoritos", payload)
           .then((response) => {
             if (response.status === 200) {
               firstPair = ["favoriteId", response.data._id];
             }
           });
 
-        await axios.post("https://192.168.2.137/api/alarmes", payload)
-        .then((response) => {
-          if(response.status === 200) {
-            fourthPair = ["alarmId", response.data._id];
-          }
-        });
+        await axios
+          .post("http://192.168.1.5:5000/api/alarmes", payload)
+          .then((response) => {
+            if (response.status === 200) {
+              fourthPair = ["alarmId", response.data._id];
+            }
+          });
 
         let secondPair = ["userToken", userToken];
         let thirdPair = ["userId", userId];
 
         try {
-          await AsyncStorage.multiSet([firstPair, secondPair, thirdPair, fourthPair]);
+          await AsyncStorage.multiSet([
+            firstPair,
+            secondPair,
+            thirdPair,
+            fourthPair,
+          ]);
         } catch (e) {
           console.log(e);
         }

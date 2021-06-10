@@ -16,15 +16,34 @@ export default function Alarm({ navigation }) {
 
         setAlarmUserId(alarmUserId);
 
+        console.log(`Esse é o valor de alarme${alarmId}`);
+
         let payload = {
-          _id: alarmId
+          _id: alarmId,
         };
 
-        await axios.post("http://192.168.2.137:5000/api/alarmes/listar", payload)
-        .then((response) => {
-          x = response.data;
-          setAlarms(x.alarmes);
-        });
+        await axios
+          .post("http://192.168.1.5:5000/api/alarmes/listar", payload)
+          .then((response) => {
+            x = response.data;
+            if (x !== null) {
+              // let intervaloHoras = parseInt(x.alarmes[0].intervalor_horas);
+              // let numeroDeVezes = Math.round(24 / intervaloHoras);
+              // let horarios = [];
+
+              // console.log();
+              // for (let y = numeroDeVezes; y >= 1; y--) {
+              //   let hora = Math.round(24 / y);
+              //   horarios.push(hora);
+              // }
+
+              // setTimeout(() => {
+              // console.log(horarios);
+
+              setAlarms(x);
+              // }, 1000);
+            }
+          });
       }
 
       fetchData();
@@ -33,45 +52,82 @@ export default function Alarm({ navigation }) {
     }
   }, []);
 
-  return (
-    <>
+  if (alarms === null || alarms.length !== 0) {
+    return (
       <ScrollView>
         <View style={styles.container}>
           <MiniLogo />
 
           <View style={styles.alarmesAtivos}>
             <Text style={styles.tituloAlarme}>Lembretes ativos</Text>
-            {/* Aqui que vai o loop */}
-            <View style={{ marginBottom: 40 }}>
-              <View style={styles.horariosAlarme}>
-                <Text style={styles.horarios}>9:00h | 17:00h | 1:00h</Text>
-                <Text style={styles.quantasHoras}>8 em 8 horas</Text>
-              </View>
-              <View style={styles.infosRemedio}>
-                <View style={styles.infosRemedioLeft}>
-                  <Text style={styles.infosRemedioLeftText}>Amoxicilina</Text>
-                </View>
-                <View style={styles.infosRemedioRight}>
-                  <Text style={styles.infosRemedioRightText}>
-                    Duração: 7 dias
-                  </Text>
-                  <Text style={styles.infosRemedioRightText}>
-                    Quantidade: 3x ao dia
-                  </Text>
-                </View>
-              </View>
-            </View>
-            {/* Fim do loop */}
+            <Text
+              style={{
+                color: "#005A3B",
+                fontFamily: "Lato-Regular",
+                fontSize: 17,
+                marginTop: 8,
+              }}
+            >
+              Você não possui alarmes ativos
+            </Text>
           </View>
         </View>
       </ScrollView>
-      <FAB
-        style={styles.fab}
-        icon="plus"
-        onPress={() => navigation.navigate("CreateAlarm")}
-      />
-    </>
-  );
+    );
+  } else {
+    return (
+      <>
+        <ScrollView>
+          <View style={styles.container}>
+            <MiniLogo />
+
+            <View style={styles.alarmesAtivos}>
+              <Text style={styles.tituloAlarme}>Lembretes ativos</Text>
+              {/* Aqui que vai o loop */}
+              {alarms.map((item) => (
+                <View style={{ marginBottom: 40 }} key={item.id_alarme}>
+                  <View style={styles.horariosAlarme}>
+                    <Text style={styles.horarios}>
+                      {Math.round(24 / item.intervalor_horas)}h |{" "}
+                      {Math.round(24 / item.intervalor_horas) +
+                        item.intervalor_horas +
+                        "h |"}{" "}
+                      1:00h
+                    </Text>
+                    <Text style={styles.quantasHoras}>
+                      {item.intervalor_horas} em {item.intervalor_horas} horas
+                    </Text>
+                  </View>
+                  <View style={styles.infosRemedio}>
+                    <View style={styles.infosRemedioLeft}>
+                      <Text style={styles.infosRemedioLeftText}>
+                        {item.nome_medicamento}
+                      </Text>
+                    </View>
+                    <View style={styles.infosRemedioRight}>
+                      <Text style={styles.infosRemedioRightText}>
+                        Duração: {item.dias_tratamento} dias
+                      </Text>
+                      <Text style={styles.infosRemedioRightText}>
+                        Quantidade: {Math.round(24 / item.intervalor_horas)}x ao
+                        dia
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              ))}
+              {/* Fim do loop */}
+            </View>
+          </View>
+        </ScrollView>
+        <FAB
+          style={styles.fab}
+          icon="plus"
+          onPress={() => navigation.navigate("CreateAlarm")}
+        />
+      </>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

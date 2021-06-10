@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
     };
 
     axios
-      .post("https://api-npab.herokuapp.com/api/usuarios/login", payload)
+      .post("http://192.168.1.5:5000/api/usuarios/login", payload)
       .then((response) => {
         console.log(response);
         if (response.status === 200) {

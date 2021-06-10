@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import MiniLogo from "../../Logos/AlternateLogo";
+import axios from "axios";
 import { Text, Card } from "react-native-paper";
 import SearchBar from "../../components/Searchbar";
 import ScannerButton from "../../components/ScannerButton";
@@ -14,6 +15,7 @@ import ScannerButton from "../../components/ScannerButton";
 export default function Home({ navigation }) {
   const [modalVisibile, setModalVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [buscaRecente, setBuscaRecente] = React.useState(null);
   const [type, setType] = React.useState();
   const [data, setData] = React.useState();
 
@@ -28,12 +30,44 @@ export default function Home({ navigation }) {
     const payload = {
       search: text,
     };
-    
+
     navigation.navigate("SearchResults", {
       screen: "Resultados",
       params: { payload: payload },
     });
     setIsLoading(false);
+  }
+
+  React.useEffect(() => {
+    async function fetchListAccordingToBarCode() {
+      if (data !== undefined && data !== null) {
+        let payload = {
+          barCode: data,
+        };
+        axios
+          .post("http://192.168.1.5:5000/api/bulas/codigoBarras", payload)
+          .then((response) => {
+            setBuscaRecente(response.data[0]);
+            navigation.navigate("SearchResults", {
+              screen: "HomeBula",
+              params: {
+                id: response.data[0]._id,
+              },
+            });
+          });
+      }
+    }
+
+    fetchListAccordingToBarCode();
+  }, [data]);
+
+  async function verBula(id) {
+    navigation.navigate("SearchResults", {
+      screen: "HomeBula",
+      params: {
+        id,
+      },
+    });
   }
 
   return (
@@ -47,22 +81,37 @@ export default function Home({ navigation }) {
           isLoading={isLoading}
           setIsLoading={setIsLoading}
         />
-        <ScannerButton />
+        <ScannerButton onCode={onCodeScanned} />
         <View style={styles.buscasRecentes}>
           <Text style={styles.tituloBuscas}>Buscas recentes</Text>
           <View>
-            <View elevation={5} style={styles.card}>
-              <View style={styles.leftCard}>
-                <Text style={styles.leftCardRemedio}>Paracetamol</Text>
-                <Text style={styles.leftCardInfo}>750mg</Text>
-                <Text style={styles.leftCardInfo}>Medicamento genérico</Text>
+            {buscaRecente !== null ? (
+              <View elevation={5} style={styles.card}>
+                <View style={styles.leftCard}>
+                  <Text style={styles.leftCardRemedio}>
+                    {buscaRecente.nome_bula}
+                  </Text>
+                  <Text style={styles.leftCardInfo}>
+                    {buscaRecente.composicao_bula}
+                  </Text>
+                  <Text style={styles.leftCardInfo}>
+                    {buscaRecente.generico}
+                  </Text>
+                </View>
+                <View style={styles.rightCard}>
+                  <TouchableOpacity
+                    style={styles.rightCardButton}
+                    onPress={() => verBula(buscaRecente._id)}
+                  >
+                    <Text>VER BULA</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.rightCard}>
-                <TouchableOpacity style={styles.rightCardButton}>
-                  <Text>VER BULA</Text>
-                </TouchableOpacity>
+            ) : (
+              <View>
+                <Text>Você não possui buscas recentes</Text>
               </View>
-            </View>
+            )}
           </View>
         </View>
       </View>
