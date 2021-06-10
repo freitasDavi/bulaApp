@@ -54,25 +54,32 @@ export default function Alarm({ navigation }) {
 
   if (alarms === null || alarms.length !== 0) {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <MiniLogo />
+      <View style={{ height: "100%" }}>
+        <ScrollView>
+          <View style={styles.container}>
+            <MiniLogo />
 
-          <View style={styles.alarmesAtivos}>
-            <Text style={styles.tituloAlarme}>Lembretes ativos</Text>
-            <Text
-              style={{
-                color: "#005A3B",
-                fontFamily: "Lato-Regular",
-                fontSize: 17,
-                marginTop: 8,
-              }}
-            >
-              Você não possui alarmes ativos
-            </Text>
+            <View style={styles.alarmesAtivos}>
+              <Text style={styles.tituloAlarme}>Lembretes ativos</Text>
+              <Text
+                style={{
+                  color: "#005A3B",
+                  fontFamily: "Lato-Regular",
+                  fontSize: 17,
+                  marginTop: 8,
+                }}
+              >
+                Você não possui alarmes ativos
+              </Text>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+        <FAB
+          style={styles.fab}
+          icon="plus"
+          onPress={() => navigation.navigate("CreateAlarm")}
+        />
+      </View>
     );
   } else {
     return (

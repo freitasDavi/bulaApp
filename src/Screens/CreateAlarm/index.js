@@ -2,12 +2,13 @@ import React from "react";
 import axios from "axios";
 import MiniLogo from "../../Logos/AlternateLogo";
 import { TextInput, Button } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, Text, ScrollView, StatusBar, StyleSheet } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
 const HOURREGEX = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
-export default function CreateAlarm() {
+export default function CreateAlarm({ navigation: { goBack } }) {
   const {
     control,
     handleSubmit,
@@ -16,28 +17,38 @@ export default function CreateAlarm() {
   } = useForm();
 
   const onSubmit = async (data) => {
+    alarmId = await AsyncStorage.getItem("alarmId");
+
     let payload = {
-      email_usuario: data.email,
-      nascimento_usuario: data.nascimento_usuario,
-      senha_usuario: data.senha,
-      alergia_usuario: data.alergia,
+      _id: alarmId,
+      alarmes: {
+        nome_medicamento: data.medicamento,
+        dias_tratamento: data.dias,
+        intervalor_horas: data.intervalo,
+        horario_inicial: data.horarioInicial,
+        numero_comprimidos: data.comprimidosDiarios,
+        id_alarme: Math.floor(Math.random()),
+      },
     };
 
-    axios
-      .put("https://api-npab.herokuapp.com/api/usuarios", payload)
-      .then((response) => {
-        if (response.status === 200) {
-          let data = response.data;
+    let hour = data.horarioInicial.split(":");
+    let hours = hour.map((item) => parseInt(item));
 
-          setValue("email", data.email_usuario);
-          setValue("senha", data.senha_usuario);
-          setValue("alergias", data.alergia_usuario);
-          setValue("nascimento", data.nascimento_usuario);
-        }
-      })
-      .catch((e) => {
-        console.log(`Erro ${e}`);
-      });
+    // axios
+    //   .post("http://192.168.1.5:5000/api/alarmes/add", payload)
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       let data = response.data;
+
+    //       setValue("email", data.email_usuario);
+    //       setValue("senha", data.senha_usuario);
+    //       setValue("alergias", data.alergia_usuario);
+    //       setValue("nascimento", data.nascimento_usuario);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.log(`Erro ${e}`);
+    //   });
   };
 
   const handleDelete = () => {
@@ -116,10 +127,10 @@ export default function CreateAlarm() {
                     value: true,
                     message: "O intervalo de horas é necessário",
                   },
-                  pattern: {
-                    value: HOURREGEX,
-                    message: "Not a valid email",
-                  },
+                  // pattern: {
+                  //   value: HOURREGEX,
+                  //   message: "Not a valid email",
+                  // },
                 }}
                 render={({ field: { onChange, value } }) => (
                   <TextInput
@@ -170,7 +181,7 @@ export default function CreateAlarm() {
               <Text style={styles.label}>Número de comprimidos diários: </Text>
               <Controller
                 defaultValue=""
-                name="horarioInicial"
+                name="comprimidosDiarios"
                 control={control}
                 rules={{
                   required: {
