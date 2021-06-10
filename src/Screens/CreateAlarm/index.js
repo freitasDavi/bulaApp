@@ -32,8 +32,7 @@ export default function CreateAlarm({ navigation: { goBack } }) {
     };
 
     axios
-      // .post("https://api-npab.herokuapp.com/api/alarmes/add", payload)
-      .post("http://192.168.2.137:5000/api/alarmes/add", payload)
+      .post("https://api-npab.herokuapp.com/api/alarmes/add", payload)
       .then((response) => {
         if (response.status === 200) {
           let data = response.data;
@@ -43,6 +42,7 @@ export default function CreateAlarm({ navigation: { goBack } }) {
         }
       })
       .catch((e) => {
+        goBack();
         console.log(`Erro ${e}`);
       });
   };

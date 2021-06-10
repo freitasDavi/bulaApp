@@ -1,8 +1,8 @@
 {
-  "name": "bulaApp",
-  "displayName": "bulaApp",
+  "name": "Não pule a bula",
+  "displayName": "Não pule a bula",
   "expo": {
-    "name": "bulaApp",
+    "name": "Não pule a bula",
     "slug": "bulaApp",
     "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
@@ -12,7 +12,6 @@
     "ios": {
       "bundleIdentifier": "com.yourcompany.yourappname",
       "buildNumber": "1.0.0"
-    },
-    "userInterfaceStyle": "light"
+    }
   }
 }

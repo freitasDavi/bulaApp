@@ -329,7 +329,7 @@ export default function HomeBula({ route, navigation }) {
                     <Image
                       style={styles.leftCardImage}
                       source={{
-                        uri: "https://uploads.consultaremedios.com.br/product_variation_images/full/becc4de4188cc5aaa759931dd0f8fef4811d1012.jpg?1606493189",
+                        uri: infos.url_imagem,
                       }}
                     />
                   </View>
