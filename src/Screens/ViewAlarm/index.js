@@ -15,16 +15,16 @@ export default function ViewAlarm({ route, navigation: { goBack } }) {
     setValue,
     formState: { errors },
   } = useForm();
-  const [alarmData, setAlarmData] = react
+  const [alarmData, setAlarmData] = React.useState(null);
 
   React.useEffect(() => {
     if(route.params.item !== null ) {
       setAlarmData(route.params.item);
-      setValue("medicamento", alarmData.nome_medicamento);
-      setValue("dias", alarmData.dias_tratamento);
-      setValue("intervalo", alarmData.intervalor_horas);
-      setValue("horarioInicial", alarmData.horario_inicial);
-      setValue("comprimidosDiarios", alarmData.numero_comprimidos);
+      setValue("medicamento", route.params.item.nome_medicamento);
+      setValue("dias", route.params.item.dias_tratamento);
+      setValue("intervalo", route.params.item.intervalor_horas);
+      setValue("horarioInicial", route.params.item.horario_inicial);
+      setValue("comprimidosDiarios", route.params.item.numero_comprimidos);
     }
   }, []);
 

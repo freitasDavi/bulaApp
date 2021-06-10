@@ -89,7 +89,7 @@ export default function Alarm({ navigation }) {
               <Text style={styles.tituloAlarme}>Lembretes ativos</Text>
               {/* Aqui que vai o loop */}
               {alarms.map((item) => (
-                <TouchableOpacity key={item.id_alarme} onPress={() => visualizarAlarme(item)}>
+                <TouchableOpacity key={item._id} onPress={() => visualizarAlarme(item)}>
                   <View style={{ marginBottom: 40 }} >
                     <View style={styles.horariosAlarme}>
                       <Text style={styles.horarios}>

@@ -399,7 +399,7 @@ export default function HomeBula({ route, navigation }) {
                         </TouchableOpacity>
                       );
                     }}
-                    style={{ width: 325 }}
+                    style={{ width: 310 }}
                   />
                 </View>
                 <View style={styles.sobreContainer}>
